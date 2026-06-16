@@ -1,11 +1,13 @@
-# QZR AI TanStack
+# QZsoRbet di © QZR studio
 
 App composta da:
 
 - frontend React/TanStack in `qzr-ai-tanstack`
 - backend Express/Prisma in `qzr-ai-be`
 - Postgres e Qdrant via Docker Compose
-- Ollama locale sul Mac, usato dal backend Docker tramite `host.docker.internal`
+- Ollama locale sulla macchina host, usato dal backend Docker tramite `host.docker.internal`
+
+Il repository e una monorepo: dalla root gestisci Docker, backend e frontend con gli script in `package.json`.
 
 ## Requisiti
 
@@ -130,6 +132,12 @@ Questo comando fa:
 4. applica le migration Prisma
 5. indicizza i CSV in Qdrant
 
+Prima di lanciarlo assicurati che:
+
+- Ollama sia avviato
+- `embeddinggemma` e `gemma3:12b` siano installati
+- la cartella configurata in `CSV_HOST_SOURCE_DIR` esista e contenga i CSV
+
 Poi avvia il frontend:
 
 ```bash
@@ -164,6 +172,42 @@ Rifai le migration solo quando il DB e nuovo o ci sono nuove migration:
 ```bash
 npm run docker:migrate
 ```
+
+## Struttura Repo
+
+```txt
+.
+├── docker-compose.yml
+├── package.json
+├── README.md
+├── data/
+│   └── csv/
+├── qzr-ai-be/
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── prisma/
+│   └── src/
+└── qzr-ai-tanstack/
+    ├── package.json
+    └── src/
+```
+
+File da non committare:
+
+- `.env`
+- `qzr-ai-be/.env`
+- `qzr-ai-be/.env.docker`
+- `qzr-ai-tanstack/.env`
+- `node_modules`
+- `dist`
+- CSV reali dentro `data/csv`
+
+I template da committare sono invece:
+
+- `.env.example`
+- `qzr-ai-be/.env.example`
+- `qzr-ai-be/.env.docker.example`
+- `qzr-ai-tanstack/.env.example`
 
 ## Comandi Utili
 
@@ -217,13 +261,13 @@ Backend:
 http://localhost:8555
 ```
 
-Postgres Docker dal Mac:
+Postgres Docker dalla macchina host:
 
 ```txt
 localhost:5475
 ```
 
-Qdrant Docker dal Mac:
+Qdrant Docker dalla macchina host:
 
 ```txt
 http://localhost:6335
@@ -291,4 +335,4 @@ Controlla `.env` nella root:
 CSV_HOST_SOURCE_DIR=./data/csv
 ```
 
-Se usi una cartella custom, deve esistere sul tuo Mac.
+Se usi una cartella custom, deve esistere sulla tua macchina.
