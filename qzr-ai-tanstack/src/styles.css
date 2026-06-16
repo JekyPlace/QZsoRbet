@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Spezia";
+  src: url("./assets/fonts/SpeziaMedium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Spezia";
+  src: url("./assets/fonts/SpeziaBold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Spezia Mono";
+  src: url("./assets/fonts/MonoRegular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Spezia Extended";
+  src: url("./assets/fonts/ExtendedMedium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Spezia Extra Condensed";
+  src: url("./assets/fonts/ExtraCondensedRegular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Spezia", sans-serif;
+  --font-mono: "Spezia Mono", monospace;
+}
+
+:root {
+  color: #000000;
+  background: #fff333;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  color: #000000;
+  background: #fff333;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+  font-family: "Spezia", sans-serif;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #fff333;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Spezia Extended", "Spezia", sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+code,
+pre {
+  font-family: "Spezia Mono", monospace;
+}
+
+.uppercase {
+  font-family: "Spezia Extra Condensed", "Spezia", sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+select {
+  cursor: pointer;
+}

@@ -1,0 +1,32 @@
+services:
+  backend:
+    build: ./qzr-ai-be
+    env_file:
+      - ./qzr-ai-be/.env.docker
+    ports:
+      - "8555:8555"
+    volumes:
+      - ${CSV_HOST_SOURCE_DIR:-./data/csv}:/app/data:ro
+    depends_on:
+      - postgres
+      - qdrant
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: jacopoqzr
+      POSTGRES_DB: qzr_ai
+    ports:
+      - "5475:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6335:6333"
+      - "6336:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+volumes:
+  postgres_data:
+  qdrant_data:

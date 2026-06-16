@@ -1,0 +1,16 @@
+.env
+qzr-ai-be/.env
+qzr-ai-be/.env.docker
+qzr-ai-tanstack/.env
+
+node_modules/
+**/node_modules/
+
+dist/
+**/dist/
+
+.DS_Store
+.git-backups/
+
+data/csv/*
+!data/csv/.gitkeep

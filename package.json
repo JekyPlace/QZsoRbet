@@ -1,0 +1,17 @@
+{
+  "name": "qzr-ai-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:all": "npm install --prefix qzr-ai-be && npm --prefix qzr-ai-be run db:generate && npm install --prefix qzr-ai-tanstack",
+    "setup:env": "test -f .env || cp .env.example .env; test -f qzr-ai-be/.env.docker || cp qzr-ai-be/.env.docker.example qzr-ai-be/.env.docker",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f backend",
+    "docker:migrate": "docker compose exec backend npm run db:migrate",
+    "docker:index": "docker compose exec backend npm run index:csv",
+    "docker:setup": "npm run setup:env && npm run docker:up && docker compose exec backend npm run setup:docker",
+    "dev:frontend": "npm --prefix qzr-ai-tanstack run dev",
+    "typecheck": "npm --prefix qzr-ai-be run typecheck && npm --prefix qzr-ai-tanstack run typecheck"
+  }
+}
