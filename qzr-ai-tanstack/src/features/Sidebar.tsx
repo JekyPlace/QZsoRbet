@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowRight,
-  Ellipsis,
   MessageSquare,
   Plus,
   Trash2,
@@ -25,7 +24,6 @@ function Sidebar({ expanded }: SidebarProps) {
       ? expanded
       : window.matchMedia("(min-width: 768px)").matches && expanded,
   );
-  const [openMenuChatId, setOpenMenuChatId] = useState<string | null>(null);
   const [chatToDelete, setChatToDelete] = useState<Chat | null>(null);
   const {
     chats,
@@ -38,7 +36,6 @@ function Sidebar({ expanded }: SidebarProps) {
 
   const openDeleteDialog = (chat: Chat) => {
     clearDeleteError();
-    setOpenMenuChatId(null);
     setChatToDelete(chat);
   };
 
@@ -123,23 +120,28 @@ function Sidebar({ expanded }: SidebarProps) {
           )}
 
           {chats?.length > 0 ? (
-            <ul className="m-0 grid list-none gap-2 p-0">
+            <ul className="m-0 grid w-full list-none gap-2 p-0">
               {chats.map((chat) => (
-                <li key={chat.id} className="relative flex gap-1">
+                <li
+                  key={chat.id}
+                  className={`grid w-full min-w-0 gap-1 ${
+                    _expanded ? "grid-cols-[minmax(0,1fr)_3rem]" : ""
+                  }`}
+                >
                   <Link
                     to="/chat/$chatId"
                     params={{ chatId: chat.id }}
                     aria-label={chat.label}
                     activeProps={{ className: "bg-black text-[#fff333]" }}
                     inactiveProps={{ className: "bg-[#fff333] text-black" }}
-                    className={`flex min-h-12 min-w-0 flex-1 items-center rounded-lg border-2 border-black transition hover:bg-[#fff06a] hover:text-black ${
+                    className={`flex min-h-12 min-w-0 items-center overflow-hidden rounded-lg border-2 border-black transition hover:bg-[#fff06a] hover:text-black ${
                       _expanded ? "gap-3 px-3" : "justify-center"
                     }`}
                   >
                     <MessageSquare size={18} className="shrink-0" />
                     {_expanded && (
-                      <span className="min-w-0 truncate font-medium">
-                        {chat.label}...
+                      <span className="min-w-0 flex-1 truncate font-medium">
+                        {chat.label}
                       </span>
                     )}
                   </Link>
@@ -147,30 +149,12 @@ function Sidebar({ expanded }: SidebarProps) {
                   {_expanded && (
                     <button
                       type="button"
-                      aria-label={`Opzioni per ${chat.label}`}
-                      aria-expanded={openMenuChatId === chat.id}
+                      aria-label={`Elimina ${chat.label}`}
                       className="grid size-12 shrink-0 place-items-center rounded-lg border-2 border-black bg-[#fff333] text-black transition hover:bg-black hover:text-[#fff333] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30"
-                      onClick={() =>
-                        setOpenMenuChatId((current) =>
-                          current === chat.id ? null : chat.id,
-                        )
-                      }
+                      onClick={() => openDeleteDialog(chat)}
                     >
-                      <Ellipsis size={20} />
+                      <Trash2 size={20} />
                     </button>
-                  )}
-
-                  {openMenuChatId === chat.id && (
-                    <div className="absolute top-0 right-[3.25rem] z-30 w-44 rounded-lg border-2 border-black bg-[#fff27a] p-1 shadow-[4px_4px_0_rgb(0_0_0/0.2)]">
-                      <button
-                        type="button"
-                        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-bold text-black transition hover:bg-black hover:text-[#fff333] focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-black/30"
-                        onClick={() => openDeleteDialog(chat)}
-                      >
-                        <Trash2 size={17} />
-                        Elimina chat
-                      </button>
-                    </div>
                   )}
                 </li>
               ))}
