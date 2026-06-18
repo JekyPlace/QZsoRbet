@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import useChat from "#/hooks/useChat";
 import type { Chat } from "#/hooks/useChat";
+import { capitalizeFirstLetter } from "#/utils/formatText";
 
 export type { Chat } from "#/hooks/useChat";
 import logo from "../assets/logo.png";
@@ -121,43 +122,47 @@ function Sidebar({ expanded }: SidebarProps) {
 
           {chats?.length > 0 ? (
             <ul className="m-0 grid w-full list-none gap-2 p-0">
-              {chats.map((chat) => (
-                <li
-                  key={chat.id}
-                  className={`grid w-full min-w-0 gap-1 ${
-                    _expanded ? "grid-cols-[minmax(0,1fr)_3rem]" : ""
-                  }`}
-                >
-                  <Link
-                    to="/chat/$chatId"
-                    params={{ chatId: chat.id }}
-                    aria-label={chat.label}
-                    activeProps={{ className: "bg-black text-[#fff333]" }}
-                    inactiveProps={{ className: "bg-[#fff333] text-black" }}
-                    className={`flex min-h-12 min-w-0 items-center overflow-hidden rounded-lg border-2 border-black transition hover:bg-[#fff06a] hover:text-black ${
-                      _expanded ? "gap-3 px-3" : "justify-center"
+              {chats.map((chat) => {
+                const chatLabel = capitalizeFirstLetter(chat.label);
+
+                return (
+                  <li
+                    key={chat.id}
+                    className={`grid w-full min-w-0 gap-1 ${
+                      _expanded ? "grid-cols-[minmax(0,1fr)_3rem]" : ""
                     }`}
                   >
-                    <MessageSquare size={18} className="shrink-0" />
-                    {_expanded && (
-                      <span className="min-w-0 flex-1 truncate font-medium">
-                        {chat.label}
-                      </span>
-                    )}
-                  </Link>
-
-                  {_expanded && (
-                    <button
-                      type="button"
-                      aria-label={`Elimina ${chat.label}`}
-                      className="grid size-12 shrink-0 place-items-center rounded-lg border-2 border-black bg-[#fff333] text-black transition hover:bg-black hover:text-[#fff333] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30"
-                      onClick={() => openDeleteDialog(chat)}
+                    <Link
+                      to="/chat/$chatId"
+                      params={{ chatId: chat.id }}
+                      aria-label={chatLabel}
+                      activeProps={{ className: "bg-black text-[#fff333]" }}
+                      inactiveProps={{ className: "bg-[#fff333] text-black" }}
+                      className={`flex min-h-12 min-w-0 items-center overflow-hidden rounded-lg border-2 border-black transition hover:bg-[#fff06a] hover:text-black ${
+                        _expanded ? "gap-3 px-3" : "justify-center"
+                      }`}
                     >
-                      <Trash2 size={20} />
-                    </button>
-                  )}
-                </li>
-              ))}
+                      <MessageSquare size={18} className="shrink-0" />
+                      {_expanded && (
+                        <span className="min-w-0 flex-1 truncate font-medium">
+                          {chatLabel}
+                        </span>
+                      )}
+                    </Link>
+
+                    {_expanded && (
+                      <button
+                        type="button"
+                        aria-label={`Elimina ${chatLabel}`}
+                        className="grid size-12 shrink-0 place-items-center rounded-lg border-2 border-black bg-[#fff333] text-black transition hover:bg-black hover:text-[#fff333] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30"
+                        onClick={() => openDeleteDialog(chat)}
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             _expanded &&

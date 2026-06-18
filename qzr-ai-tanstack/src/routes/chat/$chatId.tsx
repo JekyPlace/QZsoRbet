@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import MarkdownMessage from "#/components/MarkdownMessage";
 import useChat from "#/hooks/useChat";
+import formatDate from "#/utils/formatDate";
+import { capitalizeFirstLetter } from "#/utils/formatText";
 
 export const Route = createFileRoute("/chat/$chatId")({
   component: RouteComponent,
@@ -17,6 +19,16 @@ function formatMessageTime(timestamp?: string) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+function getMessageDateKey(timestamp?: string) {
+  if (!timestamp) return "";
+
+  const date = new Date(timestamp);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  return [date.getFullYear(), date.getMonth(), date.getDate()].join("-");
 }
 
 function RouteComponent() {
@@ -40,11 +52,8 @@ function RouteComponent() {
     <div className="flex min-h-[calc(100vh-3.5rem)] flex-col sm:min-h-[calc(100vh-5rem)]">
       {chat && (
         <header className="mb-5 border-b-2 border-black pb-4 sm:mb-7">
-          <p className="m-0 text-base font-bold uppercase opacity-70">
-            Conversazione
-          </p>
           <h1 className="mt-1 mb-0 truncate text-xl font-black sm:text-2xl">
-            {chat.label}
+            {capitalizeFirstLetter(chat.label)}
           </h1>
         </header>
       )}
@@ -86,47 +95,69 @@ function RouteComponent() {
         )}
 
         {chat &&
-          chat?.messages?.map((message) => (
-            <div
-              className={`flex w-full ${
-                message.from === "HUMAN" ? "justify-end" : "justify-start"
-              }`}
-              key={message.id}
-            >
-              <article
-                className={`min-w-0 rounded-2xl border-2 border-black px-4 py-3.5 text-[0.98rem] shadow-[3px_3px_0_rgb(0_0_0/0.12)] sm:px-5 sm:py-4 sm:text-base ${
-                  message.from === "HUMAN"
-                    ? "w-fit max-w-[92%] rounded-br-sm bg-black text-[#fff333] sm:max-w-[72%]"
-                    : "w-full rounded-bl-sm bg-[#fff27a] text-black lg:max-w-[92%]"
-                }`}
-              >
-                <div className="mb-3 flex items-center justify-between gap-6 uppercase">
-                  <span
-                    className={`rounded-full border px-3 py-1 text-base font-bold ${
+          chat?.messages?.map((message, index) => {
+            const messageDateKey = getMessageDateKey(message.timestamp);
+            const previousMessage = chat.messages[index - 1];
+            const previousMessageDateKey = getMessageDateKey(
+              previousMessage?.timestamp,
+            );
+            const shouldShowDateSeparator =
+              messageDateKey && messageDateKey !== previousMessageDateKey;
+
+            return (
+              <div key={message.id} className="contents">
+                {shouldShowDateSeparator && (
+                  <div className="flex w-full justify-center py-1">
+                    <time
+                      className="rounded-full border-2 border-black bg-[#fff333] px-4 py-1.5 text-xs font-bold uppercase text-black"
+                      dateTime={message.timestamp}
+                    >
+                      {formatDate(message.timestamp)}
+                    </time>
+                  </div>
+                )}
+
+                <div
+                  className={`flex w-full ${
+                    message.from === "HUMAN" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <article
+                    className={`min-w-0 rounded-2xl border-2 border-black px-4 py-3.5 text-[0.98rem] shadow-[3px_3px_0_rgb(0_0_0/0.12)] sm:px-5 sm:py-4 sm:text-base ${
                       message.from === "HUMAN"
-                        ? "border-[#fff333]/35 bg-[#fff333]/12 text-[#fff27a]"
-                        : "border-black/20 bg-black/5 text-black/65"
+                        ? "w-fit max-w-[92%] rounded-br-sm bg-black text-[#fff333] sm:max-w-[72%]"
+                        : "w-full rounded-bl-sm bg-[#fff27a] text-black lg:max-w-[92%]"
                     }`}
                   >
-                    {message.from === "HUMAN" ? "Tu" : "AI"}
-                  </span>
-                  <time
-                    className="font-mono text-xs opacity-45"
-                    dateTime={message.timestamp}
-                  >
-                    {formatMessageTime(message.timestamp)}
-                  </time>
+                    <div className="mb-3 flex items-center justify-between gap-6 uppercase">
+                      <span
+                        className={`rounded-full border px-3 py-1 text-base font-bold ${
+                          message.from === "HUMAN"
+                            ? "border-[#fff333]/35 bg-[#fff333]/12 text-[#fff27a]"
+                            : "border-black/20 bg-black/5 text-black/65"
+                        }`}
+                      >
+                        {message.from === "HUMAN" ? "Tu" : "AI"}
+                      </span>
+                      <time
+                        className="font-mono text-xs opacity-45"
+                        dateTime={message.timestamp}
+                      >
+                        {formatMessageTime(message.timestamp)}
+                      </time>
+                    </div>
+                    {message.from === "CHATBOT" ? (
+                      <MarkdownMessage content={message.content} />
+                    ) : (
+                      <p className="m-0 leading-7 whitespace-pre-wrap break-words">
+                        {message.content}
+                      </p>
+                    )}
+                  </article>
                 </div>
-                {message.from === "CHATBOT" ? (
-                  <MarkdownMessage content={message.content} />
-                ) : (
-                  <p className="m-0 leading-7 whitespace-pre-wrap break-words">
-                    {message.content}
-                  </p>
-                )}
-              </article>
-            </div>
-          ))}
+              </div>
+            );
+          })}
 
         {pendingMessage && (
           <div className="flex w-full justify-end">
