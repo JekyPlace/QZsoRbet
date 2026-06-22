@@ -107,13 +107,14 @@ function RouteComponent() {
             return (
               <div key={message.id} className="contents">
                 {shouldShowDateSeparator && (
-                  <div className="flex w-full justify-center py-1">
+                  <div className="flex w-full flex-col items-center gap-1.5 py-1">
                     <time
-                      className="rounded-full border-2 border-black bg-[#fff333] px-4 py-1.5 text-xs font-bold uppercase text-black"
+                      className="font-extended text-[0.68rem] font-medium tracking-[0.02em] text-black/30"
                       dateTime={message.timestamp}
                     >
                       {formatDate(message.timestamp)}
                     </time>
+                    <span className="h-px w-28 bg-black/10" />
                   </div>
                 )}
 

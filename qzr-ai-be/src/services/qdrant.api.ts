@@ -1,8 +1,7 @@
 import { createEmbeddings } from "./embedding.api.js";
 
 const QDRANT_URL = process.env.QDRANT_URL ?? "http://localhost:6333";
-const QDRANT_COLLECTION =
-  process.env.QDRANT_COLLECTION ?? "csv_documents";
+const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION ?? "csv_documents";
 const QDRANT_SEARCH_LIMIT = Number(process.env.QDRANT_SEARCH_LIMIT ?? 5);
 const QDRANT_SCORE_THRESHOLD = Number(
   process.env.QDRANT_SCORE_THRESHOLD ?? 0.45,

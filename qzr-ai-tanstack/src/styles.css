@@ -43,6 +43,7 @@
 @theme {
   --font-sans: "Spezia", sans-serif;
   --font-mono: "Spezia Mono", monospace;
+  --font-extended: "Spezia Extended", "Spezia", sans-serif;
 }
 
 :root {
