@@ -1,18 +1,20 @@
 # QZsoRbet di ©QZR Studio
 
-QZsoRbet e una web app full-stack per interrogare file CSV tramite una chat AI locale.
+QZsoRbet e una web app full-stack per interrogare file CSV e PDF tramite una chat AI locale.
 
-L'app legge i CSV da una cartella configurabile, li indicizza in un vector database e usa quei dati come contesto per rispondere alle domande dell'utente.
+L'app legge CSV e PDF da una cartella configurabile, li indicizza in un vector database e usa quei dati come contesto per rispondere alle domande dell'utente.
 
 In pratica:
 
 ```txt
-CSV -> embeddings -> Qdrant -> retrieval semantico -> Ollama -> risposta in chat
+CSV/PDF -> chunks -> embeddings -> Qdrant -> retrieval semantico -> Ollama -> risposta in chat
 ```
 
 ## Cosa Fa
 
 - indicizza file `.csv`
+- indicizza file `.pdf`
+- estrae testo dai PDF e lo divide in chunk
 - genera embeddings con Ollama
 - salva gli embeddings in Qdrant
 - recupera i contenuti piu rilevanti rispetto alla domanda
@@ -20,7 +22,7 @@ CSV -> embeddings -> Qdrant -> retrieval semantico -> Ollama -> risposta in chat
 - salva chat e messaggi in Postgres
 - mostra le risposte in streaming nel frontend React
 
-Lo use case tipico e un assistente AI privato che risponde usando dati aziendali locali, senza mandare i CSV a servizi cloud.
+Lo use case tipico e un assistente AI privato che risponde usando dati aziendali locali, senza mandare CSV o PDF a servizi cloud.
 
 ## Stack
 
@@ -63,14 +65,14 @@ ollama pull embeddinggemma
 ollama pull gemma3:12b
 ```
 
-`embeddinggemma` serve per indicizzare i CSV.
+`embeddinggemma` serve per indicizzare CSV e PDF.
 `gemma3:12b` serve per generare le risposte in chat.
 
 Con 8 GB di RAM l'app puo partire, ma `gemma3:12b` puo essere lento o pesante. In quel caso conviene usare un modello piu piccolo e aggiornare il modello nel backend.
 
-## Setup CSV
+## Setup Documenti
 
-Scelta semplice: metti i CSV in:
+Scelta semplice: metti CSV e PDF in:
 
 ```txt
 data/csv
@@ -82,10 +84,12 @@ Oppure configura una cartella custom nel file `.env` della root:
 CSV_HOST_SOURCE_DIR=/Users/jacopo/Sources
 ```
 
+Questa variabile mantiene il nome `CSV_HOST_SOURCE_DIR` per compatibilita, ma la cartella puo contenere sia `.csv` che `.pdf`.
+
 Su Windows usa slash `/`, non backslash `\`:
 
 ```env
-CSV_HOST_SOURCE_DIR=C:/Users/Mario/Documents/csv
+CSV_HOST_SOURCE_DIR=C:/Users/Mario/Documents/sources
 ```
 
 Dentro Docker questa cartella viene montata come:
@@ -94,10 +98,18 @@ Dentro Docker questa cartella viene montata come:
 /app/data
 ```
 
-Il backend legge i CSV da:
+Il backend Docker legge CSV e PDF da:
 
 ```env
 CSV_SOURCE_DIR=/app/data
+PDF_SOURCE_DIR=/app/data
+```
+
+In locale, il backend puo leggere gli stessi file da:
+
+```env
+CSV_SOURCE_DIR=/Users/jacopo/Sources
+PDF_SOURCE_DIR=/Users/jacopo/Sources
 ```
 
 ## Primo Avvio
@@ -122,13 +134,13 @@ http://localhost:3000
 2. avvia backend, Postgres e Qdrant
 3. genera il Prisma Client
 4. applica le migration Prisma
-5. indicizza i CSV in Qdrant
+5. indicizza CSV e PDF in Qdrant
 
 Prima di lanciarlo assicurati che:
 
 - Ollama sia avviato
 - i modelli Ollama siano installati
-- la cartella CSV esista e contenga almeno un file `.csv`
+- la cartella sorgente esista e contenga almeno un file `.csv` o `.pdf`
 
 ## Uso Quotidiano
 
@@ -141,7 +153,7 @@ npm run dev:frontend
 
 Non serve reindicizzare ogni volta.
 
-Reindicizza solo quando cambi i CSV o quando Qdrant e vuoto:
+Reindicizza solo quando cambi CSV/PDF o quando Qdrant e vuoto:
 
 ```bash
 npm run docker:index
@@ -173,10 +185,28 @@ Setup completo Docker:
 npm run docker:setup
 ```
 
-Indicizza i CSV:
+Indicizza CSV e PDF dentro Docker:
 
 ```bash
 npm run docker:index
+```
+
+Indicizza solo i CSV in locale:
+
+```bash
+npm run index:csv
+```
+
+Indicizza solo i PDF in locale:
+
+```bash
+npm run index:pdf
+```
+
+Indicizza CSV e PDF in locale:
+
+```bash
+npm run index:all
 ```
 
 Applica migration Prisma:
@@ -241,22 +271,30 @@ Dentro Docker il backend usa:
 DATABASE_URL=postgresql://postgres:jacopoqzr@postgres:5432/qzr_ai
 QDRANT_URL=http://qdrant:6333
 OLLAMA_URL=http://host.docker.internal:11434
+CSV_SOURCE_DIR=/app/data
+PDF_SOURCE_DIR=/app/data
+```
+
+In locale, se Qdrant gira tramite questo `docker-compose.yml`, usa la porta host `6335`:
+
+```env
+QDRANT_URL=http://localhost:6335
 ```
 
 ## Windows
 
 Su Windows usa Docker Desktop con backend WSL2.
 
-Nel file `.env` della root, i path dei CSV devono usare slash `/`:
+Nel file `.env` della root, i path della cartella documenti devono usare slash `/`:
 
 ```env
-CSV_HOST_SOURCE_DIR=C:/Users/Mario/Documents/csv
+CSV_HOST_SOURCE_DIR=C:/Users/Mario/Documents/sources
 ```
 
 Evita:
 
 ```env
-CSV_HOST_SOURCE_DIR=C:\Users\Mario\Documents\csv
+CSV_HOST_SOURCE_DIR=C:\Users\Mario\Documents\sources
 ```
 
 Il backend Docker raggiunge Ollama locale tramite:
@@ -281,7 +319,7 @@ Non committare:
 - `qzr-ai-tanstack/.env`
 - `node_modules`
 - `dist`
-- CSV reali dentro `data/csv`
+- CSV/PDF reali dentro `data/csv`
 
 I template da committare sono:
 
@@ -315,7 +353,7 @@ npm run docker:up
 
 Se hai gia un altro Qdrant sulla porta `6333`, questo progetto espone Qdrant su `6335` per evitare conflitti.
 
-### `fetch failed` durante `index:csv`
+### `fetch failed` durante `index:csv` o `index:pdf`
 
 Controlla Ollama:
 
@@ -338,7 +376,19 @@ docker compose exec backend node -e "fetch('http://qdrant:6333/collections').the
 
 Se stampa `200`, Qdrant e raggiungibile.
 
-### I CSV non vengono trovati
+Se lanci gli script in locale, controlla Qdrant dalla macchina host:
+
+```bash
+curl http://localhost:6335/collections
+```
+
+In locale `QDRANT_URL` deve essere:
+
+```env
+QDRANT_URL=http://localhost:6335
+```
+
+### I CSV o PDF non vengono trovati
 
 Controlla `.env` nella root:
 
@@ -346,4 +396,14 @@ Controlla `.env` nella root:
 CSV_HOST_SOURCE_DIR=./data/csv
 ```
 
-Se usi una cartella custom, deve esistere sulla tua macchina.
+Se usi una cartella custom, deve esistere sulla tua macchina e contenere file `.csv` o `.pdf`.
+
+### Warning `standardFontDataUrl` durante `index:pdf`
+
+Durante l'estrazione PDF potresti vedere:
+
+```txt
+Ensure that the `standardFontDataUrl` API parameter is provided
+```
+
+Se l'indicizzazione continua e stampa `PDF indexing completed`, il warning non e bloccante.
