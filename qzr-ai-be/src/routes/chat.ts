@@ -1,11 +1,12 @@
 import { Router, type Response } from "express";
 import { Identity, Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
-import { streamMessageFromAI } from "../services/ai.api.js";
+import { getOllamaModels, streamMessageFromAI } from "../services/ai.api.js";
 import type { AIMessage } from "../services/ai.api.js";
 import { getRelevantCsvContext } from "../services/qdrant.api.js";
 
 const chatRouter = Router();
+const DEFAULT_OLLAMA_MODEL = process.env.OLLAMA_DEFAULT_MODEL ?? "gemma3:12b";
 
 const MODEL_SYSTEM_MESSAGE: AIMessage = {
   role: "system",
@@ -13,8 +14,8 @@ const MODEL_SYSTEM_MESSAGE: AIMessage = {
     "Il tuo nome è QZSorbet.",
     "Sei un modello AI sviluppato da QZR Studio.",
     "Rispondi sempre in italiano, anche quando le fonti o la domanda sono in un'altra lingua.",
-    "Quando ti viene chiesto chi sei, come ti chiami o chi ti ha sviluppato, rispondi usando queste informazioni.",
-    "Non è necessario ripetere il tuo nome o la tua provenienza in ogni risposta.",
+    "Non iniziare le risposte presentandoti.",
+    "Non ripetere il tuo nome o la tua provenienza, a meno che l'utente non chieda esplicitamente chi sei, come ti chiami o chi ti ha sviluppato.",
     "Non citare mai nomi di file, source, righe o altri metadati tecnici nella risposta.",
     "Se una informazione è presa dal sito web, non dire che i dati sono presi dal sito web ma limitati a rispondere secondo il prompt.",
     "Renditi disponibile e con un tono giocoso e godibile",
@@ -44,6 +45,7 @@ type MessageBody = {
   chatId?: string;
   label?: string;
   content?: string;
+  model?: string;
   timestamp?: string;
 };
 
@@ -61,10 +63,31 @@ function startSseHeartbeat(response: Response) {
 }
 
 chatRouter.post("/message", async (request, response) => {
-  const { chatId, label, content, timestamp } = request.body as MessageBody;
+  const { chatId, label, content, model, timestamp } =
+    request.body as MessageBody;
 
   if (!content?.trim()) {
     response.status(400).json({ error: "content is required" });
+    return;
+  }
+
+  const selectedModel = model?.trim() || DEFAULT_OLLAMA_MODEL;
+
+  try {
+    const availableModels = await getOllamaModels();
+    const modelExists = availableModels.some(
+      (availableModel) => availableModel.name === selectedModel,
+    );
+
+    if (!modelExists) {
+      response.status(400).json({
+        error: `Model "${selectedModel}" is not available in Ollama`,
+      });
+      return;
+    }
+  } catch (error) {
+    console.error("Failed to validate Ollama model", error);
+    response.status(502).json({ error: "Failed to load Ollama models" });
     return;
   }
 
@@ -146,7 +169,7 @@ chatRouter.post("/message", async (request, response) => {
 
     for await (const chunk of streamMessageFromAI(
       contextMessages,
-      "gemma3:12b",
+      selectedModel,
       abortController.signal,
     )) {
       contentGenerated += chunk;

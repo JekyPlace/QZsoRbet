@@ -8,6 +8,18 @@ const OLLAMA_CONTEXT_SIZE = Number(process.env.OLLAMA_CONTEXT_SIZE ?? 16384);
 const OLLAMA_MAX_OUTPUT_TOKENS = Number(
   process.env.OLLAMA_MAX_OUTPUT_TOKENS ?? 4096,
 );
+const OLLAMA_EMBED_MODEL = process.env.OLLAMA_EMBED_MODEL ?? "embeddinggemma";
+
+export type OllamaModel = {
+  name: string;
+};
+
+type OllamaTagsResponse = {
+  models?: Array<{
+    name?: string;
+    model?: string;
+  }>;
+};
 
 type OllamaChatResponse = {
   message?: {
@@ -18,6 +30,34 @@ type OllamaChatResponse = {
   done_reason?: string;
   error?: string;
 };
+
+export async function getOllamaModels(): Promise<OllamaModel[]> {
+  const response = await fetch(`${OLLAMA_URL}/api/tags`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Ollama models: ${await response.text()}`);
+  }
+
+  const data = (await response.json()) as OllamaTagsResponse;
+
+  return (data.models ?? [])
+    .map((model) => model.name ?? model.model ?? "")
+    .filter((name) => name.trim().length > 0)
+    .filter((name) => !isEmbeddingModel(name))
+    .map((name) => ({ name }));
+}
+
+function isEmbeddingModel(name: string) {
+  const normalizedName = name.toLowerCase();
+  const normalizedEmbedModel = OLLAMA_EMBED_MODEL.toLowerCase();
+
+  return (
+    normalizedName === normalizedEmbedModel ||
+    normalizedName.startsWith(`${normalizedEmbedModel}:`) ||
+    normalizedName.includes("embedding") ||
+    normalizedName.includes("embed")
+  );
+}
 
 export async function* streamMessageFromAI(
   messages: AIMessage[],

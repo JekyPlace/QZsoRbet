@@ -4,12 +4,17 @@ type MessageBody = {
   chatId?: string;
   label?: string;
   content: string;
+  model?: string;
 };
 
 type StreamEvent =
   | { event: "chunk"; data: { content: string } }
   | { event: "done"; data: { chat: Chat } }
   | { event: "error"; data: { error: string } };
+
+export type OllamaModel = {
+  name: string;
+};
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
@@ -115,6 +120,31 @@ export async function streamChatMessage(
 
 export async function postMessage(body: MessageBody) {
   return streamChatMessage(body);
+}
+
+export async function getModels(): Promise<OllamaModel[]> {
+  const response = await fetch(apiUrl("/models"));
+
+  if (!response.ok) {
+    throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const models = await response.json();
+
+  if (!Array.isArray(models)) {
+    throw new Error("Il server non ha restituito una lista di modelli");
+  }
+
+  return models
+    .filter(
+      (model): model is OllamaModel =>
+        typeof model === "object" &&
+        model !== null &&
+        "name" in model &&
+        typeof model.name === "string" &&
+        model.name.trim().length > 0,
+    )
+    .map((model) => ({ name: model.name }));
 }
 
 export async function getChats() {

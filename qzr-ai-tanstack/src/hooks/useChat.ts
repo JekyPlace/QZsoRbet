@@ -44,7 +44,7 @@ export async function deleteChatById(chatId: string): Promise<void> {
   }
 }
 
-export default function useChat(chatId?: string) {
+export default function useChat(chatId?: string, selectedModel?: string) {
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [pendingMessage, setPendingMessage] = useState("");
@@ -66,9 +66,12 @@ export default function useChat(chatId?: string) {
       if (!chatId) throw new Error("Chat non selezionata");
       if (!content) throw new Error("Il messaggio non può essere vuoto");
 
-      return streamChatMessage({ chatId, content }, (chunk) => {
-        setStreamingMessage((current) => current + chunk);
-      });
+      return streamChatMessage(
+        { chatId, content, model: selectedModel || undefined },
+        (chunk) => {
+          setStreamingMessage((current) => current + chunk);
+        },
+      );
     },
     onMutate: () => {
       const sentMessage = message.trim();

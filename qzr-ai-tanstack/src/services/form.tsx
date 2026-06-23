@@ -7,6 +7,7 @@ type NavigateToChat = (options: {
 
 export async function handleSubmit(
   messageFromBody: string,
+  model: string | undefined,
   navigate: NavigateToChat,
 ) {
   const content = messageFromBody.trim();
@@ -14,6 +15,7 @@ export async function handleSubmit(
   const message = {
     label: content.split(" ").slice(0, 8).join(" "),
     content,
+    model,
   };
 
   const data = await postMessage(message);

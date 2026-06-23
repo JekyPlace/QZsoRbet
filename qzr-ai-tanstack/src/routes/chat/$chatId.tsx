@@ -1,6 +1,8 @@
+import { useEffect, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import MarkdownMessage from "#/components/MarkdownMessage";
 import useChat from "#/hooks/useChat";
+import useOllamaModels from "#/hooks/useOllamaModels";
 import formatDate from "#/utils/formatDate";
 import { capitalizeFirstLetter } from "#/utils/formatText";
 
@@ -34,6 +36,14 @@ function getMessageDateKey(timestamp?: string) {
 function RouteComponent() {
   const { chatId } = Route.useParams();
   const {
+    models,
+    selectedModel,
+    setSelectedModel,
+    modelsError,
+    isModelsLoading,
+    hasNoModels,
+  } = useOllamaModels();
+  const {
     sendMessage,
     message,
     setMessage,
@@ -46,7 +56,12 @@ function RouteComponent() {
     refetchChat,
     pendingMessage,
     streamingMessage,
-  } = useChat(chatId);
+  } = useChat(chatId, selectedModel);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [chat?.messages.length, pendingMessage, streamingMessage]);
 
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] flex-col sm:min-h-[calc(100vh-5rem)]">
@@ -198,12 +213,16 @@ function RouteComponent() {
             </article>
           </div>
         )}
+
+        <div ref={bottomRef} />
       </div>
 
       {!isChatLoading && chat && (
         <form
           onSubmit={(event) => {
             event.preventDefault();
+            if (hasNoModels) return;
+
             sendMessage();
           }}
           className="sticky bottom-0 mt-6 flex flex-col gap-2 border-t-2 border-black bg-[#fff333] pt-4 min-[560px]:flex-row min-[560px]:flex-wrap min-[560px]:items-end sm:mt-8 sm:pt-5"
@@ -211,19 +230,62 @@ function RouteComponent() {
           <textarea
             value={message}
             onChange={(event) => setMessage(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter" || event.shiftKey) return;
+
+              event.preventDefault();
+              if (!isSending && message.trim() && !hasNoModels) sendMessage();
+            }}
             aria-label="Scrivi un messaggio"
             placeholder="Scrivi un messaggio..."
             rows={2}
             className="min-h-14 min-w-0 flex-1 resize-y rounded-xl border-2 border-black bg-[#fff27a] px-4 py-3 leading-6 text-black outline-none transition placeholder:text-black/50 focus:bg-[#fff6a3] focus:ring-3 focus:ring-black/20"
           />
+          <label className="flex min-w-44 flex-col gap-1 text-xs font-bold min-[560px]:max-w-56">
+            Modello
+            <select
+              value={selectedModel}
+              onChange={(event) => setSelectedModel(event.target.value)}
+              disabled={isSending || isModelsLoading || models.length === 0}
+              className="min-h-14 rounded-xl border-2 border-black bg-[#fff27a] px-3 py-2 text-sm text-black outline-none transition focus:bg-[#fff6a3] focus:ring-3 focus:ring-black/20 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {models.length > 0 ? (
+                models.map((model) => (
+                  <option key={model.name} value={model.name}>
+                    {model.name}
+                  </option>
+                ))
+              ) : (
+                <option value="">
+                  {isModelsLoading ? "Caricamento..." : "Default backend"}
+                </option>
+              )}
+            </select>
+          </label>
           <button
             type="submit"
-            disabled={isSending || !message.trim()}
+            disabled={isSending || !message.trim() || hasNoModels}
             className="min-h-14 shrink-0 rounded-xl border-2 border-black bg-black px-6 py-3 font-bold text-[#fff333] transition hover:bg-[#fff06a] hover:text-black focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Invia
           </button>
 
+          {hasNoModels && (
+            <p
+              className="m-0 text-sm font-medium text-black min-[440px]:basis-full"
+              role="alert"
+            >
+              Nessun modello Ollama disponibile.
+            </p>
+          )}
+          {modelsError && !hasNoModels && (
+            <p
+              className="m-0 text-sm font-medium text-black min-[440px]:basis-full"
+              role="alert"
+            >
+              Modelli non disponibili: uso il default del backend.
+            </p>
+          )}
           {sendError && (
             <p
               className="m-0 text-sm font-medium text-black min-[440px]:basis-full"

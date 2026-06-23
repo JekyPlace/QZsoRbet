@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import useChat from "#/hooks/useChat";
 import type { Chat } from "#/hooks/useChat";
+import formatDate from "#/utils/formatDate";
 import { capitalizeFirstLetter } from "#/utils/formatText";
 
 export type { Chat } from "#/hooks/useChat";
@@ -96,16 +97,22 @@ function Sidebar({ expanded }: SidebarProps) {
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 p-2 sm:gap-4 sm:p-3">
-        <Link
-          to="/"
-          aria-label="Nuova chat"
-          className={`flex min-h-11 items-center rounded-lg border-2 border-black bg-black font-bold text-[#fff333] transition hover:bg-[#fff06a] hover:text-black ${
-            _expanded ? "gap-3 px-3" : "justify-center"
+        <div
+          className={`shrink-0 ${
+            _expanded ? "border-b-2 border-black pb-3" : ""
           }`}
         >
-          <Plus size={20} />
-          {_expanded && <span>Nuova chat</span>}
-        </Link>
+          <Link
+            to="/"
+            aria-label="Nuova chat"
+            className={`flex min-h-11 items-center rounded-lg border-2 border-black bg-black font-bold text-[#fff333] transition hover:bg-[#fff06a] hover:text-black ${
+              _expanded ? "gap-3 px-3" : "justify-center"
+            }`}
+          >
+            <Plus size={20} />
+            {_expanded && <span>Nuova chat</span>}
+          </Link>
+        </div>
 
         {_expanded && (
           <p className="m-0 px-1 text-base font-bold uppercase">
@@ -144,8 +151,13 @@ function Sidebar({ expanded }: SidebarProps) {
                     >
                       <MessageSquare size={18} className="shrink-0" />
                       {_expanded && (
-                        <span className="min-w-0 flex-1 truncate font-medium">
-                          {chatLabel}
+                        <span className="flex min-w-0 flex-1 flex-col">
+                          <span className="truncate font-medium">
+                            {chatLabel}
+                          </span>
+                          <span className="font-mono text-[0.65rem] leading-4 opacity-45">
+                            {formatDate(chat.lastModification)}
+                          </span>
                         </span>
                       )}
                     </Link>

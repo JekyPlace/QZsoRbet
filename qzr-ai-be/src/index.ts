@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import chatRouter from "./routes/chat.js";
 import chatsRouter from "./routes/chats.js";
+import { getOllamaModels } from "./services/ai.api.js";
 import { getPdfContent } from "../scripts/index-pdf-to-qdrant.js";
 
 const app = express();
@@ -14,6 +15,14 @@ const corsOrigin = process.env.CORS_ORIGIN?.split(",")
 
 app.use(cors({ origin: corsOrigin }));
 app.use(express.json());
+app.get("/models", async (_request, response) => {
+  try {
+    response.json(await getOllamaModels());
+  } catch (error) {
+    console.error("Failed to get Ollama models", error);
+    response.status(502).json({ error: "Failed to get Ollama models" });
+  }
+});
 app.use("/chat", chatRouter);
 app.use("/chats", chatsRouter);
 

@@ -3,6 +3,7 @@ import Sidebar from "../features/Sidebar";
 import { useState } from "react";
 import { handleSubmit } from "../services/form";
 import { useNavigate } from "@tanstack/react-router";
+import useOllamaModels from "#/hooks/useOllamaModels";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -11,15 +12,23 @@ function Home() {
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const {
+    models,
+    selectedModel,
+    setSelectedModel,
+    modelsError,
+    isModelsLoading,
+    hasNoModels,
+  } = useOllamaModels();
 
   const createChat = async () => {
-    if (!message.trim() || isCreating) return;
+    if (!message.trim() || isCreating || hasNoModels) return;
 
     setIsCreating(true);
     setCreateError(null);
 
     try {
-      await handleSubmit(message, navigate);
+      await handleSubmit(message, selectedModel || undefined, navigate);
     } catch (error) {
       setCreateError(
         error instanceof Error
@@ -44,7 +53,7 @@ function Home() {
             <div>
               <p className="m-0 text-lg font-bold">Creazione della chat...</p>
               <p className="mt-1 mb-0 text-sm opacity-65">
-                QZSorbet sta preparando la risposta.
+                QZsoRbet sta preparando la risposta.
               </p>
             </div>
           </div>
@@ -57,7 +66,7 @@ function Home() {
             className="flex w-full max-w-176 flex-col gap-3 rounded-xl border-2 border-black bg-[#fff333] p-4 leading-relaxed text-black sm:gap-4 sm:p-6 md:p-8"
           >
             <p className="m-0">
-              Ciao, sono <b className="text-lg">QZSorbet.ai</b> Sono un
+              Ciao, sono <b className="text-lg">QZsoRbet.ai</b> Sono un
               assistente virtuale creato da QZR. Come posso aiutarti oggi?
             </p>
             <textarea
@@ -66,13 +75,44 @@ function Home() {
               className="min-h-32 w-full resize-y rounded-lg border-2 border-black bg-[#fff27a] px-4 py-3 leading-relaxed text-black outline-none transition placeholder:text-[#4a4200] focus:bg-[#fff6a3] focus:ring-3 focus:ring-black/20"
               placeholder="Inserisci qui la tua domanda"
             />
+            <label className="flex flex-col gap-1.5 text-sm font-bold">
+              Modello
+              <select
+                value={selectedModel}
+                onChange={(event) => setSelectedModel(event.target.value)}
+                disabled={isCreating || isModelsLoading || models.length === 0}
+                className="min-h-12 rounded-lg border-2 border-black bg-[#fff27a] px-3 py-2 text-black outline-none transition focus:bg-[#fff6a3] focus:ring-3 focus:ring-black/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {models.length > 0 ? (
+                  models.map((model) => (
+                    <option key={model.name} value={model.name}>
+                      {model.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">
+                    {isModelsLoading ? "Caricamento modelli..." : "Default backend"}
+                  </option>
+                )}
+              </select>
+            </label>
             <button
               type="submit"
-              disabled={!message.trim()}
+              disabled={!message.trim() || hasNoModels}
               className="w-full rounded-lg border-2 border-black bg-black px-4 py-3 font-bold text-[#fff333] transition hover:bg-[#fff06a] hover:text-black focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Invia
             </button>
+            {hasNoModels && (
+              <p className="m-0 text-sm font-medium text-black" role="alert">
+                Nessun modello Ollama disponibile.
+              </p>
+            )}
+            {modelsError && !hasNoModels && (
+              <p className="m-0 text-sm font-medium text-black" role="alert">
+                Modelli non disponibili: uso il default del backend.
+              </p>
+            )}
             {createError && (
               <p className="m-0 text-sm font-medium text-black" role="alert">
                 {createError}
