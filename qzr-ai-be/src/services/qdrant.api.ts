@@ -1,5 +1,5 @@
 import { searchRelevantCsvContext } from "../lib/qdrant.brain.js";
-import type { DocumentContext } from "../types/document.types.js";
+import type { DocumentContext } from "../types/api.types.js";
 
 const QDRANT_FALLBACK_QUERY_HINT =
   process.env.QDRANT_FALLBACK_QUERY_HINT ?? "QZR";

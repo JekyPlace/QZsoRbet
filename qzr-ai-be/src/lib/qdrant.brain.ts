@@ -1,5 +1,5 @@
 import { createEmbeddings } from "../services/embedding.api.js";
-import type { DocumentContext } from "../types/document.types.js";
+import type { DocumentContext } from "../types/api.types.js";
 
 const QDRANT_URL = process.env.QDRANT_URL ?? "http://localhost:6333";
 const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION ?? "csv_documents";

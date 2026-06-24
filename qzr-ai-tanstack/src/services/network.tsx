@@ -1,20 +1,9 @@
-import type { Chat } from "#/hooks/useChat";
-
-type MessageBody = {
-  chatId?: string;
-  label?: string;
-  content: string;
-  model?: string;
-};
+import type { Chat, ChatMessageBody, OllamaModel } from "#/types/api.types";
 
 type StreamEvent =
   | { event: "chunk"; data: { content: string } }
   | { event: "done"; data: { chat: Chat } }
   | { event: "error"; data: { error: string } };
-
-export type OllamaModel = {
-  name: string;
-};
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
@@ -44,7 +33,7 @@ function parseStreamEvent(block: string): StreamEvent | null {
 }
 
 export async function streamChatMessage(
-  body: MessageBody,
+  body: ChatMessageBody,
   onChunk?: (content: string) => void,
 ): Promise<Chat> {
   const response = await fetch(apiUrl("/chat/message"), {
@@ -118,7 +107,7 @@ export async function streamChatMessage(
   return completedChat;
 }
 
-export async function postMessage(body: MessageBody) {
+export async function postMessage(body: ChatMessageBody) {
   return streamChatMessage(body);
 }
 

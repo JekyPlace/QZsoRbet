@@ -8,11 +8,11 @@ import {
   X,
 } from "lucide-react";
 import useChat from "#/hooks/useChat";
-import type { Chat } from "#/hooks/useChat";
+import type { Chat } from "#/types/api.types";
 import formatDate from "#/utils/formatDate";
 import { capitalizeFirstLetter } from "#/utils/formatText";
 
-export type { Chat } from "#/hooks/useChat";
+export type { Chat } from "#/types/api.types";
 import logo from "../assets/logo.png";
 
 type SidebarProps = {

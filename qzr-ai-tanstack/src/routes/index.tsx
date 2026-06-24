@@ -23,7 +23,6 @@ function Home() {
 
   const createChat = async () => {
     if (!message.trim() || isCreating || hasNoModels) return;
-
     setIsCreating(true);
     setCreateError(null);
 
@@ -59,9 +58,9 @@ function Home() {
           </div>
         ) : (
           <form
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault();
-              void createChat();
+              await createChat();
             }}
             className="flex w-full max-w-176 flex-col gap-3 rounded-xl border-2 border-black bg-[#fff333] p-4 leading-relaxed text-black sm:gap-4 sm:p-6 md:p-8"
           >
@@ -91,7 +90,9 @@ function Home() {
                   ))
                 ) : (
                   <option value="">
-                    {isModelsLoading ? "Caricamento modelli..." : "Default backend"}
+                    {isModelsLoading
+                      ? "Caricamento modelli..."
+                      : "Default backend"}
                   </option>
                 )}
               </select>

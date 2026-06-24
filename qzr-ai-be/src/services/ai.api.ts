@@ -1,4 +1,4 @@
-import type { AIMessage, OllamaModel } from "../types/ai.types.js";
+import type { AIMessage, OllamaModel } from "../types/api.types.js";
 
 const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
 const OLLAMA_CONTEXT_SIZE = Number(process.env.OLLAMA_CONTEXT_SIZE ?? 16384);

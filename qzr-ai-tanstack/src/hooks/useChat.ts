@@ -1,21 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiUrl, getChats, streamChatMessage } from "#/services/network";
-
-type Message = {
-  id: string;
-  from: "HUMAN" | "CHATBOT";
-  content: string;
-  timestamp: string;
-  chatId: string;
-};
-
-export type Chat = {
-  id: string;
-  label: string;
-  messages: Message[];
-  lastModification: string;
-};
+import type { Chat } from "#/types/api.types";
 
 const chatKeys = {
   all: ["chats"] as const,

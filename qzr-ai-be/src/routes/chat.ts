@@ -18,8 +18,7 @@ import {
 } from "../lib/sse.brain.js";
 import { getOllamaModels, streamMessageFromAI } from "../services/ai.api.js";
 import { getRelevantCsvContext } from "../services/qdrant.api.js";
-import type { AIMessage } from "../types/ai.types.js";
-import type { MessageBody } from "../types/chat.types.js";
+import type { AIMessage, MessageBody } from "../types/api.types.js";
 
 const chatRouter = Router();
 const DEFAULT_OLLAMA_MODEL = process.env.OLLAMA_DEFAULT_MODEL ?? "gemma3:12b";

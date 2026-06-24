@@ -1,5 +1,4 @@
-import type { AIMessage } from "../types/ai.types.js";
-import type { DocumentContext } from "../types/document.types.js";
+import type { AIMessage, DocumentContext } from "../types/api.types.js";
 
 export const OUT_OF_SCOPE_RESPONSE =
   "Non posso rispondere perché l'informazione non è presente nei documenti indicizzati.";
