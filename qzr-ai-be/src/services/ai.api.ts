@@ -1,7 +1,4 @@
-export type AIMessage = {
-  role: "user" | "assistant" | "system";
-  content: string;
-};
+import type { AIMessage, OllamaModel } from "../types/ai.types.js";
 
 const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
 const OLLAMA_CONTEXT_SIZE = Number(process.env.OLLAMA_CONTEXT_SIZE ?? 16384);
@@ -9,10 +6,6 @@ const OLLAMA_MAX_OUTPUT_TOKENS = Number(
   process.env.OLLAMA_MAX_OUTPUT_TOKENS ?? 4096,
 );
 const OLLAMA_EMBED_MODEL = process.env.OLLAMA_EMBED_MODEL ?? "embeddinggemma";
-
-export type OllamaModel = {
-  name: string;
-};
 
 type OllamaTagsResponse = {
   models?: Array<{

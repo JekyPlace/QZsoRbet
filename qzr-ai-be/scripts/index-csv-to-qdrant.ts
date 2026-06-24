@@ -8,8 +8,7 @@ const SOURCE_DIR = resolve(
   process.env.CSV_SOURCE_DIR ?? "/Users/jacopo/Sources",
 );
 const QDRANT_URL = process.env.QDRANT_URL ?? "http://localhost:6333";
-const QDRANT_COLLECTION =
-  process.env.QDRANT_COLLECTION ?? "csv_documents";
+const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION ?? "csv_documents";
 const ROWS_PER_CHUNK = Number(process.env.CSV_ROWS_PER_CHUNK ?? 5);
 const EMBEDDING_BATCH_SIZE = Number(process.env.EMBEDDING_BATCH_SIZE ?? 16);
 
@@ -72,6 +71,7 @@ function parseCsv(text: string, delimiter: string): string[][] {
       }
       continue;
     }
+    /**/
 
     if (character === delimiter && !quoted) {
       row.push(field.trim());
@@ -101,7 +101,10 @@ function parseCsv(text: string, delimiter: string): string[][] {
 
 function formatRow(headers: string[], row: string[]): string {
   return headers
-    .map((header, index) => `${header || `column_${index + 1}`}: ${row[index] ?? ""}`)
+    .map(
+      (header, index) =>
+        `${header || `column_${index + 1}`}: ${row[index] ?? ""}`,
+    )
     .join("\n");
 }
 
@@ -181,7 +184,9 @@ async function ensureCollection(vectorSize: number): Promise<void> {
   );
 
   if (!response.ok) {
-    throw new Error(`Unable to create Qdrant collection: ${await response.text()}`);
+    throw new Error(
+      `Unable to create Qdrant collection: ${await response.text()}`,
+    );
   }
 }
 
@@ -272,7 +277,9 @@ async function main() {
     const chunks = createChunks(filePath, rows);
 
     if (chunks.length === 0) {
-      console.log(`[${index + 1}/${files.length}] Skipped empty CSV: ${filePath}`);
+      console.log(
+        `[${index + 1}/${files.length}] Skipped empty CSV: ${filePath}`,
+      );
       continue;
     }
 
