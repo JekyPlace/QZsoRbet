@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import type { Chat } from "#/types/api.types";
 
+const BOTTOM_OFFSET = 96;
+
 export type ChatMessagesProps = {
   chat: Chat;
   isSending: boolean;
@@ -14,10 +16,38 @@ export function useChatMessages({
   streamingMessage,
 }: ChatMessagesProps) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const isNearBottomRef = useRef(true);
+  const previousChatIdRef = useRef(chat.id);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [chat.messages.length, pendingMessage, streamingMessage]);
+    const updateIsNearBottom = () => {
+      const scrollBottom =
+        window.document.documentElement.scrollHeight -
+        window.innerHeight -
+        window.scrollY;
+
+      isNearBottomRef.current = scrollBottom <= BOTTOM_OFFSET;
+    };
+
+    updateIsNearBottom();
+    window.addEventListener("scroll", updateIsNearBottom, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateIsNearBottom);
+    };
+  }, []);
+
+  useEffect(() => {
+    const isNewChat = previousChatIdRef.current !== chat.id;
+    previousChatIdRef.current = chat.id;
+
+    if (!isNewChat && !isNearBottomRef.current) return;
+
+    bottomRef.current?.scrollIntoView({
+      behavior: streamingMessage ? "auto" : "smooth",
+      block: "end",
+    });
+  }, [chat.id, chat.messages.length, pendingMessage, streamingMessage]);
 
   return {
     bottomRef,

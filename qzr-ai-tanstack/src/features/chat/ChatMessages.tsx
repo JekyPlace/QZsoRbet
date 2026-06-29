@@ -34,7 +34,7 @@ export default function ChatMessages(props: ChatMessagesProps) {
         <ChatStreamingMessage content={props.streamingMessage} />
       )}
 
-      <div ref={bottomRef} />
+      <div ref={bottomRef} className="h-72 shrink-0 min-[560px]:h-36 sm:h-40" />
     </div>
   );
 }
