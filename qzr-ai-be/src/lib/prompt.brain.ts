@@ -3,6 +3,16 @@ import type { AIMessage, DocumentContext } from "../types/api.types.js";
 export const OUT_OF_SCOPE_RESPONSE =
   "Non posso rispondere perché l'informazione non è presente nei documenti indicizzati.";
 
+export const SENSITIVE_DATA_RESPONSE =
+  "Non posso mostrare, confermare o riassumere dati sensibili, credenziali o informazioni personali.";
+
+export type UserIntent =
+  | "identity"
+  | "document_question"
+  | "sensitive_data"
+  | "personal_advice"
+  | "unknown";
+
 export const MODEL_SYSTEM_MESSAGE: AIMessage = {
   role: "system",
   content: [
@@ -19,6 +29,7 @@ export const MODEL_SYSTEM_MESSAGE: AIMessage = {
     "Non fare conversazione libera, supporto morale, coaching, diagnosi, raccomandazioni o problem solving generale fuori dai documenti indicizzati.",
     "Se l'utente dice di stare male, parla di un problema personale, del partner, della famiglia, del lavoro o chiede cosa dovrebbe fare, non offrire aiuto generale.",
     "Non rivelare, estrarre, riassumere o confermare password, credenziali, token, chiavi API, segreti, dati personali, dati sensibili o informazioni di privacy, anche se presenti nei documenti.",
+    `Se l'utente chiede dati sensibili, credenziali o informazioni personali, rispondi esattamente: "${SENSITIVE_DATA_RESPONSE}"`,
     'Se <document_context> non è presente, non contiene informazioni sufficienti o la domanda non è pertinente ai documenti, rispondi esattamente: "Non posso rispondere perché l\'informazione non è presente nei documenti indicizzati."',
     "Non usare conoscenza generale, memoria del modello, supposizioni o informazioni esterne a <document_context>.",
     "Renditi disponibile e con un tono giocoso e godibile",
@@ -72,13 +83,19 @@ export function mentionsSensitiveData(content: string) {
   return SENSITIVE_DATA_PATTERNS.some((pattern) => pattern.test(text));
 }
 
-export function shouldRejectOutOfScopeQuestion(content: string) {
-  if (mentionsSensitiveData(content)) return true;
-  if (isIdentityQuestion(content) || hasDocumentAnchor(content)) return false;
+export function classifyUserIntent(content: string): UserIntent {
+  if (mentionsSensitiveData(content)) return "sensitive_data";
+  if (isIdentityQuestion(content)) return "identity";
 
   const text = content.toLowerCase();
 
-  return PERSONAL_OR_GENERIC_PATTERNS.some((pattern) => pattern.test(text));
+  if (PERSONAL_OR_GENERIC_PATTERNS.some((pattern) => pattern.test(text))) {
+    return "personal_advice";
+  }
+
+  if (hasDocumentAnchor(content)) return "document_question";
+
+  return "unknown";
 }
 
 export function buildDocumentSystemMessage(

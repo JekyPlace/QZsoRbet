@@ -28,10 +28,10 @@ export function useSidebarChatItem(chat: Chat, expanded: boolean) {
     chatLabel,
     formattedDate: formatDate(chat.lastModification),
     itemClassName: `grid w-full min-w-0 gap-1 ${
-      expanded ? "grid-cols-[minmax(0,1fr)_3rem]" : ""
+      expanded ? "grid-cols-[minmax(0,1fr)_2.5rem]" : ""
     }`,
-    linkClassName: `flex min-h-12 min-w-0 items-center overflow-hidden rounded-lg border-2 border-black transition hover:bg-[#fff06a] hover:text-black ${
-      expanded ? "gap-3 px-3" : "justify-center"
+    linkClassName: `group relative flex min-h-10 min-w-0 items-center overflow-hidden rounded-lg border-2 border-black transition hover:bg-[#fff06a] hover:text-black ${
+      expanded ? "gap-2.5 px-2.5 py-0.5" : "justify-center"
     }`,
   };
 }

@@ -1,18 +1,12 @@
 import type { FormEvent, KeyboardEvent } from "react";
-import type { OllamaModel } from "#/types/api.types";
 
 export type ChatPromptBuilderProps = {
   hasNoModels: boolean;
-  isModelsLoading: boolean;
   isSending: boolean;
   message: string;
-  models: OllamaModel[];
-  modelsError: string | null;
-  selectedModel: string;
   sendError: string | null;
   sendMessage: () => void;
   setMessage: (message: string) => void;
-  setSelectedModel: (model: string) => void;
 };
 
 export function useChatPromptBuilder({

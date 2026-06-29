@@ -1,16 +1,17 @@
-import { Router, type Response } from "express";
+import { Router } from "express";
 import { Identity, Prisma } from "../../generated/prisma/client.js";
 import {
   buildDocumentSystemMessage,
-  isIdentityQuestion,
+  classifyUserIntent,
   MODEL_SYSTEM_MESSAGE,
   OUT_OF_SCOPE_RESPONSE,
-  shouldRejectOutOfScopeQuestion,
+  SENSITIVE_DATA_RESPONSE,
 } from "../lib/prompt.brain.js";
 import { prisma } from "../lib/prisma.js";
 import {
   buildRetrievalQuery,
   hasRelevantDocumentContext,
+  logRagDecision,
 } from "../lib/rag.brain.js";
 import {
   prepareSseResponse,
@@ -23,6 +24,49 @@ import type { AIMessage, MessageBody } from "../types/api.types.js";
 
 const chatRouter = Router();
 const DEFAULT_OLLAMA_MODEL = process.env.OLLAMA_DEFAULT_MODEL ?? "gemma3:12b";
+
+type SaveChatExchangeParams = {
+  botContent: string;
+  chatId?: string;
+  label?: string;
+  userContent: string;
+  userTimestamp: Date;
+};
+
+async function saveChatExchange({
+  botContent,
+  chatId,
+  label,
+  userContent,
+  userTimestamp,
+}: SaveChatExchangeParams) {
+  const messages = [
+    {
+      from: Identity.HUMAN,
+      content: userContent,
+      timestamp: userTimestamp,
+    },
+    {
+      from: Identity.CHATBOT,
+      content: botContent,
+      timestamp: new Date(),
+    },
+  ];
+
+  return chatId
+    ? prisma.chat.update({
+        where: { id: chatId },
+        data: { messages: { create: messages } },
+        include: { messages: { orderBy: { timestamp: "asc" } } },
+      })
+    : prisma.chat.create({
+        data: {
+          label: label?.trim() || "New chat",
+          messages: { create: messages },
+        },
+        include: { messages: { orderBy: { timestamp: "asc" } } },
+      });
+}
 
 chatRouter.get("/:id", async (request, response) => {
   try {
@@ -53,25 +97,6 @@ chatRouter.post("/message", async (request, response) => {
   }
 
   const selectedModel = model?.trim() || DEFAULT_OLLAMA_MODEL;
-
-  try {
-    const availableModels = await getOllamaModels();
-    const modelExists = availableModels.some(
-      (availableModel) => availableModel.name === selectedModel,
-    );
-
-    if (!modelExists) {
-      response.status(400).json({
-        error: `Model "${selectedModel}" is not available in Ollama`,
-      });
-      return;
-    }
-  } catch (error) {
-    console.error("Failed to validate Ollama model", error);
-    response.status(502).json({ error: "Failed to load Ollama models" });
-    return;
-  }
-
   const parsedTimestamp = timestamp ? new Date(timestamp) : new Date();
 
   if (Number.isNaN(parsedTimestamp.getTime())) {
@@ -92,6 +117,28 @@ chatRouter.post("/message", async (request, response) => {
   try {
     const userContent = content.trim();
     let contentGenerated = "";
+    const userIntent = classifyUserIntent(userContent);
+
+    if (userIntent === "sensitive_data" || userIntent === "personal_advice") {
+      contentGenerated =
+        userIntent === "sensitive_data"
+          ? SENSITIVE_DATA_RESPONSE
+          : OUT_OF_SCOPE_RESPONSE;
+
+      const chat = await saveChatExchange({
+        botContent: contentGenerated,
+        chatId,
+        label,
+        userContent,
+        userTimestamp: parsedTimestamp,
+      });
+
+      writeSse(response, "chunk", { content: contentGenerated });
+      writeSse(response, "done", { chat });
+      response.end();
+      return;
+    }
+
     const previousMessages = chatId
       ? await prisma.message.findMany({
           where: { chatId },
@@ -107,43 +154,49 @@ chatRouter.post("/message", async (request, response) => {
       .map((message) => message.content);
     const retrievalQuery = buildRetrievalQuery(recentUserContext, userContent);
     const documentContext = await getRelevantCsvContext(retrievalQuery);
+    const isMissingDocumentContext =
+      userIntent !== "identity" && !hasRelevantDocumentContext(documentContext);
 
-    if (
-      shouldRejectOutOfScopeQuestion(userContent) ||
-      (!isIdentityQuestion(userContent) &&
-        !hasRelevantDocumentContext(documentContext))
-    ) {
+    logRagDecision({
+      documentContext,
+      isMissingDocumentContext,
+      retrievalQuery,
+      userIntent,
+    });
+
+    if (isMissingDocumentContext) {
       contentGenerated = OUT_OF_SCOPE_RESPONSE;
 
-      const messages = [
-        {
-          from: Identity.HUMAN,
-          content: userContent,
-          timestamp: parsedTimestamp,
-        },
-        {
-          from: Identity.CHATBOT,
-          content: contentGenerated,
-          timestamp: new Date(),
-        },
-      ];
-
-      const chat = chatId
-        ? await prisma.chat.update({
-            where: { id: chatId },
-            data: { messages: { create: messages } },
-            include: { messages: { orderBy: { timestamp: "asc" } } },
-          })
-        : await prisma.chat.create({
-            data: {
-              label: label?.trim() || "New chat",
-              messages: { create: messages },
-            },
-            include: { messages: { orderBy: { timestamp: "asc" } } },
-          });
+      const chat = await saveChatExchange({
+        botContent: contentGenerated,
+        chatId,
+        label,
+        userContent,
+        userTimestamp: parsedTimestamp,
+      });
 
       writeSse(response, "chunk", { content: contentGenerated });
       writeSse(response, "done", { chat });
+      response.end();
+      return;
+    }
+
+    try {
+      const availableModels = await getOllamaModels();
+      const modelExists = availableModels.some(
+        (availableModel) => availableModel.name === selectedModel,
+      );
+
+      if (!modelExists) {
+        writeSse(response, "error", {
+          error: `Model "${selectedModel}" is not available in Ollama`,
+        });
+        response.end();
+        return;
+      }
+    } catch (error) {
+      console.error("Failed to validate Ollama model", error);
+      writeSse(response, "error", { error: "Failed to load Ollama models" });
       response.end();
       return;
     }
@@ -175,32 +228,13 @@ chatRouter.post("/message", async (request, response) => {
       writeSse(response, "chunk", { content: chunk });
     }
 
-    const messages = [
-      {
-        from: Identity.HUMAN,
-        content: userContent,
-        timestamp: parsedTimestamp,
-      },
-      {
-        from: Identity.CHATBOT,
-        content: contentGenerated,
-        timestamp: new Date(),
-      },
-    ];
-
-    const chat = chatId
-      ? await prisma.chat.update({
-          where: { id: chatId },
-          data: { messages: { create: messages } },
-          include: { messages: { orderBy: { timestamp: "asc" } } },
-        })
-      : await prisma.chat.create({
-          data: {
-            label: label?.trim() || "New chat",
-            messages: { create: messages },
-          },
-          include: { messages: { orderBy: { timestamp: "asc" } } },
-        });
+    const chat = await saveChatExchange({
+      botContent: contentGenerated,
+      chatId,
+      label,
+      userContent,
+      userTimestamp: parsedTimestamp,
+    });
 
     writeSse(response, "done", { chat });
     response.end();

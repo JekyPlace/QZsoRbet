@@ -18,6 +18,7 @@ export function useChatMessages({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isNearBottomRef = useRef(true);
   const previousChatIdRef = useRef(chat.id);
+  const previousPendingMessageRef = useRef(pendingMessage);
 
   useEffect(() => {
     const updateIsNearBottom = () => {
@@ -43,9 +44,13 @@ export function useChatMessages({
 
   useEffect(() => {
     const isNewChat = previousChatIdRef.current !== chat.id;
-    previousChatIdRef.current = chat.id;
+    const hasNewPendingMessage =
+      !previousPendingMessageRef.current && Boolean(pendingMessage);
 
-    if (!isNewChat && !isNearBottomRef.current) return;
+    previousChatIdRef.current = chat.id;
+    previousPendingMessageRef.current = pendingMessage;
+
+    if (!isNewChat && !hasNewPendingMessage && !isNearBottomRef.current) return;
 
     const container = containerRef.current;
     if (!container) return;
@@ -54,6 +59,7 @@ export function useChatMessages({
       behavior: streamingMessage ? "auto" : "smooth",
       top: container.scrollHeight,
     });
+    isNearBottomRef.current = true;
   }, [chat.id, chat.messages.length, pendingMessage, streamingMessage]);
 
   return {

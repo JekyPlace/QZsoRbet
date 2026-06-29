@@ -8,11 +8,11 @@ export default function ChatPendingMessage(props: ChatPendingMessageProps) {
 
   return (
     <div className="flex w-full justify-end">
-      <article className="w-fit max-w-[92%] rounded-2xl rounded-br-sm border-2 border-black bg-black px-4 py-3.5 text-[0.98rem] text-[#fff333] shadow-[3px_3px_0_rgb(0_0_0/0.12)] sm:max-w-[72%] sm:px-5 sm:py-4 sm:text-base">
-        <div className="mb-3 w-fit rounded-full border border-[#fff333]/35 bg-[#fff333]/12 px-3 py-1 text-base font-bold text-[#fff27a] uppercase">
+      <article className="w-fit max-w-[92%] rounded-xl rounded-br-sm border-2 border-black bg-black px-3 py-2.5 text-[0.95rem] text-[#fff333] shadow-[2px_2px_0_rgb(0_0_0/0.12)] sm:max-w-[72%] sm:px-4 sm:py-3">
+        <div className="mb-2 w-fit rounded-full border border-[#fff333]/35 bg-[#fff333]/12 px-2.5 py-0.5 text-sm font-bold text-[#fff27a] uppercase">
           {authorLabel}
         </div>
-        <p className="m-0 leading-7 whitespace-pre-wrap break-words">
+        <p className="m-0 leading-6 whitespace-pre-wrap break-words">
           {content}
         </p>
       </article>

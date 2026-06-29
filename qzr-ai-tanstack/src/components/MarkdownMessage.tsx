@@ -7,37 +7,37 @@ type MarkdownMessageProps = {
 
 export default function MarkdownMessage({ content }: MarkdownMessageProps) {
   return (
-    <div className="min-w-0 break-words leading-7">
+    <div className="min-w-0 break-words leading-6">
       <Markdown
         remarkPlugins={[remarkGfm]}
         skipHtml
         components={{
           h1: ({ children }) => (
-            <h1 className="mt-7 mb-3 text-2xl leading-tight font-semibold first:mt-0">
+            <h1 className="mt-5 mb-2 text-xl leading-tight font-semibold first:mt-0">
               {children}
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="mt-6 mb-3 text-xl leading-tight font-semibold first:mt-0">
+            <h2 className="mt-4 mb-2 text-lg leading-tight font-semibold first:mt-0">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="mt-5 mb-2 text-lg leading-tight font-medium first:mt-0">
+            <h3 className="mt-3 mb-1.5 text-base leading-tight font-medium first:mt-0">
               {children}
             </h3>
           ),
           p: ({ children }) => (
-            <p className="my-3 first:mt-0 last:mb-0">{children}</p>
+            <p className="my-2 first:mt-0 last:mb-0">{children}</p>
           ),
           ul: ({ children }) => (
-            <ul className="my-4 list-disc space-y-2 pl-6">{children}</ul>
+            <ul className="my-3 list-disc space-y-1 pl-5">{children}</ul>
           ),
           ol: ({ children }) => (
-            <ol className="my-4 list-decimal space-y-2 pl-6">{children}</ol>
+            <ol className="my-3 list-decimal space-y-1 pl-5">{children}</ol>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="my-5 border-l-4 border-black bg-[#fff333]/40 py-2 pr-3 pl-4 italic">
+            <blockquote className="my-3 border-l-4 border-black bg-[#fff333]/40 py-1.5 pr-3 pl-3 italic">
               {children}
             </blockquote>
           ),
@@ -60,12 +60,12 @@ export default function MarkdownMessage({ content }: MarkdownMessageProps) {
             </code>
           ),
           pre: ({ children }) => (
-            <pre className="my-5 max-w-full overflow-x-auto rounded-xl border-2 border-black bg-black p-4 leading-6 text-[#fff333] [&>code]:bg-transparent [&>code]:p-0">
+            <pre className="my-3 max-w-full overflow-x-auto rounded-lg border-2 border-black bg-black p-3 leading-6 text-[#fff333] [&>code]:bg-transparent [&>code]:p-0">
               {children}
             </pre>
           ),
           table: ({ children }) => (
-            <div className="my-5 max-w-full overflow-x-auto rounded-lg border-2 border-black">
+            <div className="my-3 max-w-full overflow-x-auto rounded-lg border-2 border-black">
               <table className="w-full border-collapse text-sm">{children}</table>
             </div>
           ),
@@ -77,7 +77,7 @@ export default function MarkdownMessage({ content }: MarkdownMessageProps) {
           td: ({ children }) => (
             <td className="border-t border-black/30 px-3 py-2">{children}</td>
           ),
-          hr: () => <hr className="my-6 border-t-2 border-black" />,
+          hr: () => <hr className="my-4 border-t-2 border-black" />,
         }}
       >
         {content}

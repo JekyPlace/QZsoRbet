@@ -15,7 +15,7 @@ export default function ChatMessages(props: ChatMessagesProps) {
       ref={containerRef}
       className="scrollbar-hidden min-h-0 flex-1 overflow-y-auto pr-1 text-black"
     >
-      <div className="flex min-h-full flex-col gap-5 sm:gap-6">
+      <div className="flex min-h-full flex-col gap-3 sm:gap-4">
         {messages.map((message, index) => {
           const previousMessage = messages[index - 1];
 

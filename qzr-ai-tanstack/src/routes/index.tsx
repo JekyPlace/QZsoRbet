@@ -3,6 +3,7 @@ import Sidebar from "../features/Sidebar";
 import { useState } from "react";
 import { handleSubmit } from "../services/form";
 import { useNavigate } from "@tanstack/react-router";
+import ModelSelect from "#/components/ModelSelect";
 import useOllamaModels from "#/hooks/useOllamaModels";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -76,26 +77,13 @@ function Home() {
             />
             <label className="flex flex-col gap-1.5 text-sm font-bold">
               Modello
-              <select
-                value={selectedModel}
-                onChange={(event) => setSelectedModel(event.target.value)}
+              <ModelSelect
                 disabled={isCreating || isModelsLoading || models.length === 0}
-                className="min-h-12 rounded-lg border-2 border-black bg-[#fff27a] px-3 py-2 text-black outline-none transition focus:bg-[#fff6a3] focus:ring-3 focus:ring-black/20 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {models.length > 0 ? (
-                  models.map((model) => (
-                    <option key={model.name} value={model.name}>
-                      {model.name}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">
-                    {isModelsLoading
-                      ? "Caricamento modelli..."
-                      : "Default backend"}
-                  </option>
-                )}
-              </select>
+                isLoading={isModelsLoading}
+                models={models}
+                selectedModel={selectedModel}
+                setSelectedModel={setSelectedModel}
+              />
             </label>
             <button
               type="submit"
