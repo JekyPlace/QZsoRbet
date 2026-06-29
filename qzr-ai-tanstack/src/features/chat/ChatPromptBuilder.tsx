@@ -10,7 +10,7 @@ export default function ChatPromptBuilder(props: ChatPromptBuilderProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="fixed right-2 bottom-0 left-[calc(4rem+0.5rem)] z-20 mx-auto flex max-w-7xl flex-col gap-2 border-t-2 border-black bg-[#fff333] px-3 py-4 min-[560px]:flex-row min-[560px]:flex-wrap min-[560px]:items-end sm:right-5 sm:left-[calc(4.5rem+1.25rem)] sm:px-5 sm:py-5 md:right-8 md:left-[calc(22rem+2rem)] md:px-7"
+      className="-mx-3 -mb-3 mt-4 flex shrink-0 flex-col gap-2 border-t-2 border-black bg-[#fff333] px-3 py-4 min-[560px]:flex-row min-[560px]:flex-wrap min-[560px]:items-end sm:-mx-5 sm:-mb-5 sm:mt-5 sm:px-5 sm:py-5 md:-mx-7 md:-mb-7 md:px-7"
     >
       <textarea
         value={props.message}

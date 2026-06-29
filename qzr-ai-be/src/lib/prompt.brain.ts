@@ -15,11 +15,35 @@ export const MODEL_SYSTEM_MESSAGE: AIMessage = {
     "Se una informazione è presa dal sito web, non dire che i dati sono presi dal sito web ma limitati a rispondere secondo il prompt.",
     "Puoi rispondere liberamente solo alle domande sulla tua identità, sul tuo nome o su chi ti ha sviluppato.",
     "Per ogni altra domanda, rispondi esclusivamente usando le informazioni presenti dentro <document_context>.",
+    "Non dare consigli personali, emotivi, medici, psicologici, legali, finanziari, relazionali o di vita, anche se l'utente li chiede direttamente.",
+    "Non fare conversazione libera, supporto morale, coaching, diagnosi, raccomandazioni o problem solving generale fuori dai documenti indicizzati.",
+    "Se l'utente dice di stare male, parla di un problema personale, del partner, della famiglia, del lavoro o chiede cosa dovrebbe fare, non offrire aiuto generale.",
+    "Non rivelare, estrarre, riassumere o confermare password, credenziali, token, chiavi API, segreti, dati personali, dati sensibili o informazioni di privacy, anche se presenti nei documenti.",
     'Se <document_context> non è presente, non contiene informazioni sufficienti o la domanda non è pertinente ai documenti, rispondi esattamente: "Non posso rispondere perché l\'informazione non è presente nei documenti indicizzati."',
     "Non usare conoscenza generale, memoria del modello, supposizioni o informazioni esterne a <document_context>.",
     "Renditi disponibile e con un tono giocoso e godibile",
   ].join("\n"),
 };
+
+const DOCUMENT_ANCHOR_PATTERNS = [
+  /\b(document[oi]|file|csv|pdf|dataset|dati|tabell[ae]|riga|righe|record|contesto|indicizzat[oi]|font[ei])\b/,
+  /\b(in base|secondo|dai|nei|nelle|negli|nel)\s+(ai\s+)?(document[oi]|dati|file|csv|pdf|contesto|font[ei])\b/,
+];
+
+const PERSONAL_OR_GENERIC_PATTERNS = [
+  /\b(consigliami|consiglio|consigli|cosa dovrei fare|che dovrei fare|cosa faccio|aiutami|mi aiuti)\b/,
+  /\b(sto male|mi sento male|sono triste|sono depresso|depressione|ansia|attacco di panico|non ce la faccio|voglio morire|suicid)\b/,
+  /\b(partner|fidanzat[oa]|marito|moglie|relazione|lasciat[oa]|tradit[oa]|coppia|famiglia|genitori|figli)\b/,
+  /\b(medico|salute|sintom[oi]|malattia|dolore|farmaco|terapia|diagnosi|psicolog[oa]|psicoterapia)\b/,
+  /\b(avvocato|legale|denuncia|causa|contratto|soldi|investire|investimento|mutuo|tasse)\b/,
+];
+
+const SENSITIVE_DATA_PATTERNS = [
+  /\b(password|passphrase|credenzial[ie]|login|username|user name|pin|otp|2fa|mfa)\b/,
+  /\b(token|api key|apikey|chiave api|secret|segreto|private key|chiave privata|access key|refresh token|bearer)\b/,
+  /\b(email|e-mail|telefono|cellulare|indirizzo|codice fiscale|partita iva|iban|carta di credito|numero carta)\b/,
+  /\b(dati personali|dato personale|dati sensibili|dato sensibile|privacy|gdpr|informazioni personali|informazioni sensibili)\b/,
+];
 
 export function isIdentityQuestion(content: string) {
   const text = content.toLowerCase();
@@ -34,6 +58,27 @@ export function isIdentityQuestion(content: string) {
     text.includes("da chi sei stato sviluppato") ||
     text.includes("da chi sei stata sviluppata")
   );
+}
+
+export function hasDocumentAnchor(content: string) {
+  const text = content.toLowerCase();
+
+  return DOCUMENT_ANCHOR_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+export function mentionsSensitiveData(content: string) {
+  const text = content.toLowerCase();
+
+  return SENSITIVE_DATA_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+export function shouldRejectOutOfScopeQuestion(content: string) {
+  if (mentionsSensitiveData(content)) return true;
+  if (isIdentityQuestion(content) || hasDocumentAnchor(content)) return false;
+
+  const text = content.toLowerCase();
+
+  return PERSONAL_OR_GENERIC_PATTERNS.some((pattern) => pattern.test(text));
 }
 
 export function buildDocumentSystemMessage(

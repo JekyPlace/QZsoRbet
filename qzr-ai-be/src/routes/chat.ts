@@ -5,6 +5,7 @@ import {
   isIdentityQuestion,
   MODEL_SYSTEM_MESSAGE,
   OUT_OF_SCOPE_RESPONSE,
+  shouldRejectOutOfScopeQuestion,
 } from "../lib/prompt.brain.js";
 import { prisma } from "../lib/prisma.js";
 import {
@@ -108,8 +109,9 @@ chatRouter.post("/message", async (request, response) => {
     const documentContext = await getRelevantCsvContext(retrievalQuery);
 
     if (
-      !isIdentityQuestion(userContent) &&
-      !hasRelevantDocumentContext(documentContext)
+      shouldRejectOutOfScopeQuestion(userContent) ||
+      (!isIdentityQuestion(userContent) &&
+        !hasRelevantDocumentContext(documentContext))
     ) {
       contentGenerated = OUT_OF_SCOPE_RESPONSE;
 

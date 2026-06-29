@@ -15,25 +15,29 @@ export function useChatMessages({
   pendingMessage,
   streamingMessage,
 }: ChatMessagesProps) {
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const isNearBottomRef = useRef(true);
   const previousChatIdRef = useRef(chat.id);
 
   useEffect(() => {
     const updateIsNearBottom = () => {
+      const container = containerRef.current;
+      if (!container) return;
+
       const scrollBottom =
-        window.document.documentElement.scrollHeight -
-        window.innerHeight -
-        window.scrollY;
+        container.scrollHeight - container.clientHeight - container.scrollTop;
 
       isNearBottomRef.current = scrollBottom <= BOTTOM_OFFSET;
     };
 
+    const container = containerRef.current;
+    if (!container) return;
+
     updateIsNearBottom();
-    window.addEventListener("scroll", updateIsNearBottom, { passive: true });
+    container.addEventListener("scroll", updateIsNearBottom, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", updateIsNearBottom);
+      container.removeEventListener("scroll", updateIsNearBottom);
     };
   }, []);
 
@@ -43,14 +47,17 @@ export function useChatMessages({
 
     if (!isNewChat && !isNearBottomRef.current) return;
 
-    bottomRef.current?.scrollIntoView({
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.scrollTo({
       behavior: streamingMessage ? "auto" : "smooth",
-      block: "end",
+      top: container.scrollHeight,
     });
   }, [chat.id, chat.messages.length, pendingMessage, streamingMessage]);
 
   return {
-    bottomRef,
+    containerRef,
     messages: chat.messages,
   };
 }

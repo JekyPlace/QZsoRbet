@@ -9,10 +9,10 @@ export default function ChatPage(props: ChatPageProps) {
   const { shouldShowError, shouldShowPromptBuilder } = useChatPage(props);
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col sm:min-h-[calc(100vh-5rem)]">
+    <div className="flex h-[calc(100vh-3.5rem)] min-h-0 flex-col sm:h-[calc(100vh-5rem)] md:h-[calc(100vh-6.5rem)]">
       {props.chat && <ChatHeader label={props.chat.label} />}
 
-      <div className="flex flex-1 flex-col gap-5 text-black sm:gap-6">
+      <div className="flex min-h-0 flex-1 flex-col gap-5 text-black sm:gap-6">
         {props.isChatLoading && <ChatLoadingState />}
 
         {shouldShowError && props.chatError && (
