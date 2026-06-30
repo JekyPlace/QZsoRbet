@@ -32,6 +32,13 @@ export function useSidebar({ expanded }: SidebarProps) {
     setIsExpanded((current) => !current);
   }
 
+  function closeSidebarOnMobile() {
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+
+    setIsExpanded(false);
+  }
+
   function openDeleteDialog(chat: Chat) {
     clearDeleteError();
     setChatToDelete(chat);
@@ -59,6 +66,7 @@ export function useSidebar({ expanded }: SidebarProps) {
   return {
     chatToDelete,
     chats,
+    closeSidebarOnMobile,
     closeDeleteDialog,
     confirmDelete,
     deleteError,

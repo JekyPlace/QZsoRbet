@@ -1,5 +1,6 @@
 export type SidebarNewChatButtonProps = {
   expanded: boolean;
+  onNavigate: () => void;
 };
 
 export function useSidebarNewChatButton(expanded: boolean) {

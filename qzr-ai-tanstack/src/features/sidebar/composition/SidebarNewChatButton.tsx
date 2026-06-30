@@ -11,7 +11,12 @@ export default function SidebarNewChatButton(
   const { className } = useSidebarNewChatButton(props.expanded);
 
   return (
-    <Link to="/" aria-label="Nuova chat" className={className}>
+    <Link
+      to="/"
+      aria-label="Nuova chat"
+      className={className}
+      onClick={props.onNavigate}
+    >
       <Plus size={20} />
       {props.expanded && <span>Nuova chat</span>}
     </Link>

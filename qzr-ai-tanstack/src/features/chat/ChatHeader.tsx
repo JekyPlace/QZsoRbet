@@ -8,9 +8,9 @@ export default function ChatHeader(props: ChatHeaderProps) {
   const { title } = useChatHeader(props.label);
 
   return (
-    <header className="mb-3 flex flex-col gap-2 border-b-2 border-black pb-3 sm:mb-4 sm:flex-row sm:items-end sm:justify-between">
+    <header className="mb-2 flex flex-col gap-2 pb-1 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        <h1 className="mt-0.5 mb-0 truncate text-lg font-black sm:text-xl">
+        <h1 className="mt-0.5 mb-0 truncate text-base font-black sm:text-lg">
           {title}
         </h1>
         {props.modelsError && !props.hasNoModels && (
@@ -25,7 +25,7 @@ export default function ChatHeader(props: ChatHeaderProps) {
         )}
       </div>
 
-      <label className="flex w-full flex-col gap-1 text-xs font-bold sm:w-52">
+      <label className="flex w-full flex-col gap-1 text-[0.68rem] font-bold text-black/60 sm:w-44">
         Modello
         <ModelSelect
           disabled={

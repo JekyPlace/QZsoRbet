@@ -5,6 +5,6 @@ export type SidebarNewChatSectionProps = {
 
 export function useSidebarNewChatSection(expanded: boolean) {
   return {
-    className: `shrink-0 ${expanded ? "border-b-2 border-black pb-3" : ""}`,
+    className: `shrink-0 ${expanded ? "pb-1" : ""}`,
   };
 }

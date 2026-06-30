@@ -10,7 +10,7 @@ export default function ChatStreamingMessage(props: ChatStreamingMessageProps) {
 
   return (
     <div className="flex w-full justify-start" aria-live="polite">
-      <article className="w-full min-w-0 rounded-xl rounded-bl-sm border-2 border-black bg-[#fff27a] px-3 py-2.5 text-[0.95rem] text-black shadow-[2px_2px_0_rgb(0_0_0/0.12)] sm:px-4 sm:py-3 lg:max-w-[92%]">
+      <article className="w-full min-w-0 rounded-xl rounded-bl-sm border border-black/20 bg-[#fff27a] px-3 py-2.5 text-[0.95rem] text-black shadow-[1px_1px_0_rgb(0_0_0/0.06)] sm:px-4 sm:py-3 lg:max-w-[86%]">
         <div className="mb-2 w-fit rounded-full border border-black/20 bg-black/5 px-2.5 py-0.5 text-sm font-bold text-black/65 uppercase">
           {authorLabel}
         </div>
