@@ -22,7 +22,7 @@ export default function SidebarChatsList(props: SidebarChatsListProps) {
   return (
     <div className="scrollbar-hidden min-h-0 flex-1 overflow-y-auto">
       {shouldShowSearch && (
-        <label className="mb-3 flex min-h-8 items-center gap-1.5 rounded-md border border-black/20 bg-[#fff27a]/60 px-2 text-black focus-within:border-black/35 focus-within:bg-[#fff6a3] focus-within:ring-2 focus-within:ring-black/15">
+        <label className="mb-3 flex min-h-8 items-center gap-1.5 rounded-full border border-black/20 bg-[#fff27a]/60 px-2.5 text-black focus-within:border-black/35 focus-within:bg-[#fff6a3] focus-within:ring-2 focus-within:ring-black/15">
           <Search size={14} className="shrink-0 opacity-45" />
           <input
             type="search"

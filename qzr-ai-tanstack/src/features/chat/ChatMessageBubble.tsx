@@ -5,10 +5,14 @@ import {
 } from "./chatMessageBubble.brain";
 
 export default function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
-  const { authorLabel, isHuman, messageTime } = useChatMessageBubble(message);
+  const { isHuman, messageTime } = useChatMessageBubble(message);
 
   return (
-    <div className={`flex w-full ${isHuman ? "justify-end" : "justify-start"}`}>
+    <div
+      className={`group/message flex w-full flex-col ${
+        isHuman ? "items-end" : "items-start"
+      }`}
+    >
       <article
         className={`min-w-0 rounded-xl px-3 py-2.5 text-[0.95rem] sm:px-4 sm:py-3 ${
           isHuman
@@ -16,23 +20,6 @@ export default function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
             : "w-full rounded-bl-sm border border-black/20 bg-[#fff27a] text-black shadow-[1px_1px_0_rgb(0_0_0/0.06)] lg:max-w-[86%]"
         }`}
       >
-        <div className="mb-2 flex items-center justify-between gap-4 uppercase">
-          <span
-            className={`rounded-full border px-2.5 py-0.5 text-sm font-bold ${
-              isHuman
-                ? "border-[#fff333]/35 bg-[#fff333]/12 text-[#fff27a]"
-                : "border-black/20 bg-black/5 text-black/65"
-            }`}
-          >
-            {authorLabel}
-          </span>
-          <time
-            className="font-mono text-[0.68rem] opacity-45"
-            dateTime={message.timestamp}
-          >
-            {messageTime}
-          </time>
-        </div>
         {message.from === "CHATBOT" ? (
           <MarkdownMessage content={message.content} />
         ) : (
@@ -41,6 +28,11 @@ export default function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
           </p>
         )}
       </article>
+      <div className="mt-1 flex items-center gap-1.5 px-1 font-mono text-[0.58rem] leading-none text-black/35 opacity-0 transition-opacity group-hover/message:opacity-100 group-focus-within/message:opacity-100">
+        <span>{isHuman ? "tu" : "QZsoRbet agent"}</span>
+        <span aria-hidden="true">·</span>
+        <time dateTime={message.timestamp}>{messageTime}</time>
+      </div>
     </div>
   );
 }
