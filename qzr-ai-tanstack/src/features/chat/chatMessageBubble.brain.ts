@@ -1,4 +1,5 @@
 import type { Message } from "#/types/api.types";
+import { useState } from "react";
 
 export type ChatMessageBubbleProps = {
   message: Message;
@@ -18,11 +19,24 @@ function formatMessageTime(timestamp?: string) {
 }
 
 export function useChatMessageBubble(message: Message) {
+  const [copyLabel, setCopyLabel] = useState("Copia");
   const isHuman = message.from === "HUMAN";
+
+  async function copyMessage() {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopyLabel("Copiato");
+      window.setTimeout(() => setCopyLabel("Copia"), 1600);
+    } catch {
+      setCopyLabel("Errore");
+      window.setTimeout(() => setCopyLabel("Copia"), 1600);
+    }
+  }
 
   return {
     isHuman,
-    authorLabel: isHuman ? "Tu" : "AI",
+    copyLabel,
+    copyMessage,
     messageTime: formatMessageTime(message.timestamp),
   };
 }

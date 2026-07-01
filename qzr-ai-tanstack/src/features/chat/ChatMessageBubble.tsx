@@ -1,3 +1,4 @@
+import { Check, Copy } from "lucide-react";
 import MarkdownMessage from "#/components/MarkdownMessage";
 import {
   useChatMessageBubble,
@@ -5,7 +6,8 @@ import {
 } from "./chatMessageBubble.brain";
 
 export default function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
-  const { isHuman, messageTime } = useChatMessageBubble(message);
+  const { copyLabel, copyMessage, isHuman, messageTime } =
+    useChatMessageBubble(message);
 
   return (
     <div
@@ -32,6 +34,23 @@ export default function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
         <span>{isHuman ? "tu" : "QZsoRbet agent"}</span>
         <span aria-hidden="true">·</span>
         <time dateTime={message.timestamp}>{messageTime}</time>
+        {!isHuman && (
+          <>
+            <span aria-hidden="true">·</span>
+            <button
+              type="button"
+              aria-label={copyLabel}
+              className="grid size-3.5 appearance-none place-items-center border-0 bg-transparent p-0 text-black/45 transition hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black/30"
+              onClick={copyMessage}
+            >
+              {copyLabel === "Copiato" ? (
+                <Check size={12} aria-hidden="true" />
+              ) : (
+                <Copy size={12} aria-hidden="true" />
+              )}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

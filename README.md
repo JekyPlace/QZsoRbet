@@ -10,6 +10,51 @@ In pratica:
 CSV/PDF -> chunks -> embeddings -> Qdrant -> retrieval semantico -> Ollama -> risposta in chat
 ```
 
+## Avvio Rapido
+
+1. Installa Docker Desktop, Node.js e Ollama.
+
+2. Avvia Ollama:
+
+```bash
+ollama serve
+```
+
+Se Ollama e gia avviato come servizio/app, puoi saltare questo comando.
+
+3. Installa il modello embeddings e almeno un modello chat:
+
+```bash
+ollama pull embeddinggemma
+ollama pull gemma3:12b
+```
+
+4. Metti i file `.csv` e `.pdf` in:
+
+```txt
+data/csv
+```
+
+5. Dalla root del progetto esegui il setup completo:
+
+```bash
+npm run setup
+```
+
+6. Avvia il frontend:
+
+```bash
+npm run dev:frontend
+```
+
+7. Apri:
+
+```txt
+http://localhost:3000
+```
+
+Il comando `npm run setup` installa le dipendenze, crea gli env mancanti, avvia backend/Postgres/Qdrant, applica le migration e indicizza CSV/PDF.
+
 ## Cosa Fa
 
 - indicizza file `.csv`
@@ -19,6 +64,7 @@ CSV/PDF -> chunks -> embeddings -> Qdrant -> retrieval semantico -> Ollama -> ri
 - salva gli embeddings in Qdrant
 - recupera i contenuti piu rilevanti rispetto alla domanda
 - usa il contesto recuperato per generare una risposta
+- legge i modelli installati in Ollama e li rende selezionabili dalla UI
 - salva chat e messaggi in Postgres
 - mostra le risposte in streaming nel frontend React
 
@@ -58,7 +104,7 @@ Requisiti consigliati:
 - 15-25 GB liberi su disco
 - Ollama avviato sulla porta `11434`
 
-Scarica i modelli usati dall'app:
+Scarica almeno un modello chat e il modello embeddings:
 
 ```bash
 ollama pull embeddinggemma
@@ -66,13 +112,31 @@ ollama pull gemma3:12b
 ```
 
 `embeddinggemma` serve per indicizzare CSV e PDF.
-`gemma3:12b` serve per generare le risposte in chat.
+`gemma3:12b` e un modello chat consigliato per generare le risposte.
 
-Con 8 GB di RAM l'app puo partire, ma `gemma3:12b` puo essere lento o pesante. In quel caso conviene usare un modello piu piccolo e aggiornare il modello nel backend.
+L'app supporta i modelli gia installati in Ollama:
 
-## Setup Documenti
+- il backend espone la lista dei modelli disponibili
+- il frontend li mostra nella select "Modello"
+- la scelta viene salvata nel browser
+- se non scegli nulla, il backend usa `OLLAMA_DEFAULT_MODEL` oppure `gemma3:12b`
 
-Scelta semplice: metti CSV e PDF in:
+Puoi quindi installare anche modelli piu piccoli o piu leggeri:
+
+```bash
+ollama pull llama3.2:3b
+ollama pull qwen2.5:7b
+```
+
+Poi selezionali direttamente dall'interfaccia.
+
+Con 8 GB di RAM l'app puo partire, ma `gemma3:12b` puo essere lento o pesante. In quel caso conviene installare un modello piu piccolo e selezionarlo dalla UI.
+
+## Setup Documenti CSV/PDF
+
+L'app supporta sia `.csv` che `.pdf`.
+
+Scelta semplice: metti i documenti in:
 
 ```txt
 data/csv
@@ -84,7 +148,7 @@ Oppure configura una cartella custom nel file `.env` della root:
 CSV_HOST_SOURCE_DIR=/Users/jacopo/Sources
 ```
 
-Questa variabile mantiene il nome `CSV_HOST_SOURCE_DIR` per compatibilita, ma la cartella puo contenere sia `.csv` che `.pdf`.
+Questa variabile mantiene il nome `CSV_HOST_SOURCE_DIR` per compatibilita, ma la cartella puo contenere sia CSV che PDF.
 
 Su Windows usa slash `/`, non backslash `\`:
 
@@ -98,7 +162,7 @@ Dentro Docker questa cartella viene montata come:
 /app/data
 ```
 
-Il backend Docker legge CSV e PDF da:
+Il backend Docker legge entrambi i tipi di file da:
 
 ```env
 CSV_SOURCE_DIR=/app/data
@@ -112,13 +176,18 @@ CSV_SOURCE_DIR=/Users/jacopo/Sources
 PDF_SOURCE_DIR=/Users/jacopo/Sources
 ```
 
-## Primo Avvio
+I due indicizzatori sono separati:
+
+- `index:csv` indicizza i CSV
+- `index:pdf` indicizza i PDF
+- `index:all` esegue entrambi
+
+## Primo Avvio Completo
 
 Dalla root del progetto:
 
 ```bash
-npm run install:all
-npm run docker:setup
+npm run setup
 npm run dev:frontend
 ```
 
@@ -128,19 +197,33 @@ Poi apri:
 http://localhost:3000
 ```
 
-`npm run docker:setup` fa automaticamente:
+`npm run setup` fa automaticamente:
 
-1. crea `.env` e `qzr-ai-be/.env.docker` dai template se mancano
-2. avvia backend, Postgres e Qdrant
-3. genera il Prisma Client
-4. applica le migration Prisma
-5. indicizza CSV e PDF in Qdrant
+1. installa dipendenze backend e frontend
+2. genera il Prisma Client
+3. crea `.env` e `qzr-ai-be/.env.docker` dai template se mancano
+4. avvia backend, Postgres e Qdrant
+5. applica le migration Prisma
+6. indicizza CSV e PDF in Qdrant
 
 Prima di lanciarlo assicurati che:
 
 - Ollama sia avviato
-- i modelli Ollama siano installati
+- `embeddinggemma` sia installato
+- almeno un modello chat Ollama sia installato
 - la cartella sorgente esista e contenga almeno un file `.csv` o `.pdf`
+
+Verifica rapida dei modelli installati:
+
+```bash
+ollama list
+```
+
+Se la select modelli nel frontend e vuota, controlla che Ollama sia attivo:
+
+```bash
+ollama serve
+```
 
 ## Uso Quotidiano
 
@@ -159,6 +242,18 @@ Reindicizza solo quando cambi CSV/PDF o quando Qdrant e vuoto:
 npm run docker:index
 ```
 
+Se aggiungi solo CSV:
+
+```bash
+npm run index:csv
+```
+
+Se aggiungi solo PDF:
+
+```bash
+npm run index:pdf
+```
+
 Applica le migration solo quando il DB e nuovo o ci sono nuove migration:
 
 ```bash
@@ -171,6 +266,12 @@ Installa dipendenze backend e frontend:
 
 ```bash
 npm run install:all
+```
+
+Setup completo:
+
+```bash
+npm run setup
 ```
 
 Avvia backend, Postgres e Qdrant:
@@ -365,7 +466,7 @@ Devono esserci:
 
 ```txt
 embeddinggemma
-gemma3:12b
+almeno un modello chat, per esempio gemma3:12b
 ```
 
 Controlla Qdrant dal backend:

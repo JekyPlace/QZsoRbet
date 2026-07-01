@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "setup": "npm run install:all && npm run docker:setup",
     "install:all": "npm install --prefix qzr-ai-be && npm --prefix qzr-ai-be run db:generate && npm install --prefix qzr-ai-tanstack",
     "setup:env": "test -f .env || cp .env.example .env; test -f qzr-ai-be/.env.docker || cp qzr-ai-be/.env.docker.example qzr-ai-be/.env.docker",
     "docker:up": "docker compose up -d --build",
