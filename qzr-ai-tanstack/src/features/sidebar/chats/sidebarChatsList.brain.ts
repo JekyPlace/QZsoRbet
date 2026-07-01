@@ -1,5 +1,4 @@
 import type { Chat } from "#/types/api.types";
-import formatDate from "#/utils/formatDate";
 import { capitalizeFirstLetter } from "#/utils/formatText";
 import { useMemo, useState } from "react";
 
@@ -45,12 +44,11 @@ export function useSidebarChatItem(chat: Chat, expanded: boolean) {
 
   return {
     chatLabel,
-    formattedDate: formatDate(chat.lastModification),
-    itemClassName: `group/chat-item grid w-full min-w-0 gap-1 ${
-      expanded ? "grid-cols-[minmax(0,1fr)_2.5rem]" : ""
-    }`,
+    itemClassName: "group/chat-item relative w-full min-w-0 overflow-hidden",
     linkClassName: `group relative flex min-h-10 min-w-0 items-center overflow-hidden rounded-lg border border-black/15 transition hover:border-black/30 hover:bg-[#fff06a] hover:text-black ${
-      expanded ? "gap-2.5 px-2.5 py-0.5" : "justify-center"
+      expanded
+        ? "w-full gap-2.5 px-2.5 py-0.5 group-hover/chat-item:-translate-x-11 group-focus-within/chat-item:-translate-x-11"
+        : "justify-center"
     }`,
   };
 }

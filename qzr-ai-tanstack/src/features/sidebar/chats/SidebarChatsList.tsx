@@ -1,12 +1,20 @@
 import { Link } from "@tanstack/react-router";
 import { MessageSquare, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
 import {
   useSidebarChatItem,
   useSidebarChatsList,
   type SidebarChatsListProps,
 } from "./sidebarChatsList.brain";
 
+type ChatTooltip = {
+  label: string;
+  left: number;
+  top: number;
+};
+
 export default function SidebarChatsList(props: SidebarChatsListProps) {
+  const [chatTooltip, setChatTooltip] = useState<ChatTooltip | null>(null);
   const {
     filteredChats,
     hasChats,
@@ -49,6 +57,7 @@ export default function SidebarChatsList(props: SidebarChatsListProps) {
               expanded={props.expanded}
               onDeleteChat={props.onDeleteChat}
               onNavigate={props.onNavigate}
+              setChatTooltip={setChatTooltip}
             />
           ))}
         </ul>
@@ -63,6 +72,14 @@ export default function SidebarChatsList(props: SidebarChatsListProps) {
           </p>
         )
       )}
+      {chatTooltip && !props.expanded && (
+        <div
+          className="pointer-events-none fixed z-50 max-w-56 -translate-y-1/2 truncate rounded-lg bg-[#fff27a] px-2.5 py-1.5 text-xs font-medium text-black/75 shadow-[3px_3px_0_rgb(0_0_0/0.18)]"
+          style={{ left: chatTooltip.left, top: chatTooltip.top }}
+        >
+          {chatTooltip.label}
+        </div>
+      )}
     </div>
   );
 }
@@ -72,6 +89,7 @@ type SidebarChatItemProps = {
   expanded: boolean;
   onDeleteChat: SidebarChatsListProps["onDeleteChat"];
   onNavigate: SidebarChatsListProps["onNavigate"];
+  setChatTooltip: (tooltip: ChatTooltip | null) => void;
 };
 
 function SidebarChatItem({
@@ -79,9 +97,23 @@ function SidebarChatItem({
   expanded,
   onDeleteChat,
   onNavigate,
+  setChatTooltip,
 }: SidebarChatItemProps) {
-  const { chatLabel, formattedDate, itemClassName, linkClassName } =
-    useSidebarChatItem(chat, expanded);
+  const { chatLabel, itemClassName, linkClassName } = useSidebarChatItem(
+    chat,
+    expanded,
+  );
+
+  function showTooltip(element: HTMLElement) {
+    if (expanded) return;
+
+    const rect = element.getBoundingClientRect();
+    setChatTooltip({
+      label: chatLabel,
+      left: rect.right + 8,
+      top: rect.top + rect.height / 2,
+    });
+  }
 
   return (
     <li className={itemClassName}>
@@ -90,6 +122,10 @@ function SidebarChatItem({
         params={{ chatId: chat.id }}
         aria-label={chatLabel}
         onClick={onNavigate}
+        onFocus={(event) => showTooltip(event.currentTarget)}
+        onBlur={() => setChatTooltip(null)}
+        onMouseEnter={(event) => showTooltip(event.currentTarget)}
+        onMouseLeave={() => setChatTooltip(null)}
         activeProps={{
           "aria-current": "page",
           className:
@@ -98,17 +134,10 @@ function SidebarChatItem({
         inactiveProps={{ className: "bg-[#fff333] text-black" }}
         className={linkClassName}
       >
-        <span
-          aria-hidden="true"
-          className="absolute top-1/2 left-1 hidden h-6 w-1 -translate-y-1/2 rounded-full bg-current group-aria-[current=page]:block"
-        />
-        <MessageSquare size={17} className="shrink-0" />
+        <MessageSquare size={14} className="shrink-0" />
         {expanded && (
-          <span className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-sm font-medium">{chatLabel}</span>
-            <span className="font-mono text-[0.62rem] leading-3.5 opacity-45">
-              {formattedDate}
-            </span>
+          <span className="min-w-0 flex-1 truncate text-xs font-medium">
+            {chatLabel}
           </span>
         )}
       </Link>
@@ -117,7 +146,7 @@ function SidebarChatItem({
         <button
           type="button"
           aria-label={`Elimina ${chatLabel}`}
-          className="grid size-10 shrink-0 place-items-center rounded-lg text-black/45 opacity-0 transition hover:bg-black hover:text-[#fff333] hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30 group-hover/chat-item:opacity-100"
+          className="absolute top-0 right-0 grid size-10 translate-x-full place-items-center rounded-lg text-black/45 opacity-0 transition hover:bg-black hover:text-[#fff333] hover:opacity-100 focus-visible:translate-x-0 focus-visible:opacity-100 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30 group-hover/chat-item:translate-x-0 group-hover/chat-item:opacity-100 group-focus-within/chat-item:translate-x-0 group-focus-within/chat-item:opacity-100"
           onClick={() => onDeleteChat(chat)}
         >
           <Trash2 size={18} />

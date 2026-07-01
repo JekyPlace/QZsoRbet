@@ -13,7 +13,7 @@ export async function handleSubmit(
   const content = messageFromBody.trim();
 
   const message = {
-    label: content.split(" ").slice(0, 8).join(" "),
+    label: content.split(" ").slice(0, 10).join(" "),
     content,
     model,
   };

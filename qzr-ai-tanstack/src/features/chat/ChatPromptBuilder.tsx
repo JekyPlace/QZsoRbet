@@ -1,3 +1,4 @@
+import { SendHorizontal } from "lucide-react";
 import {
   useChatPromptBuilder,
   type ChatPromptBuilderProps,
@@ -20,14 +21,19 @@ export default function ChatPromptBuilder(props: ChatPromptBuilderProps) {
         aria-label="Scrivi un messaggio"
         placeholder="Scrivi un messaggio..."
         rows={1}
-        className="min-h-11 max-h-36 min-w-0 flex-1 resize-y rounded-lg border-2 border-black bg-[#fff27a] px-3 py-2 leading-6 text-black outline-none transition placeholder:text-black/50 focus:bg-[#fff6a3] focus:ring-3 focus:ring-black/20"
+        className="min-h-11 max-h-36 min-w-0 flex-1 resize-y rounded-full border-2 border-black bg-[#fff27a] px-4 py-2 leading-6 text-black outline-none transition placeholder:text-black/50 focus:bg-[#fff6a3] focus:ring-3 focus:ring-black/20"
       />
       <button
         type="submit"
+        aria-label="Invia messaggio"
         disabled={!canSendMessage}
-        className="min-h-11 shrink-0 rounded-lg border-2 border-black bg-black px-4 py-2 font-bold text-[#fff333] transition hover:bg-[#fff06a] hover:text-black focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30 disabled:cursor-not-allowed disabled:opacity-50"
+        className={`grid size-11 shrink-0 place-items-center rounded-full border-2 border-black bg-black text-[#fff333] transition hover:bg-[#fff06a] hover:text-black focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30 disabled:cursor-not-allowed ${
+          props.message.trim()
+            ? "opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
       >
-        Invia
+        <SendHorizontal size={18} />
       </button>
 
       {props.hasNoModels && (
