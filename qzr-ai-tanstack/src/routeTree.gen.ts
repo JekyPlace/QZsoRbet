@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ContextRouteImport } from './routes/context'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChatChatIdRouteImport } from './routes/chat/$chatId'
 
+const ContextRoute = ContextRouteImport.update({
+  id: '/context',
+  path: '/context',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -32,34 +38,45 @@ const ChatChatIdRoute = ChatChatIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteWithChildren
+  '/context': typeof ContextRoute
   '/chat/$chatId': typeof ChatChatIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteWithChildren
+  '/context': typeof ContextRoute
   '/chat/$chatId': typeof ChatChatIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteWithChildren
+  '/context': typeof ContextRoute
   '/chat/$chatId': typeof ChatChatIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chat' | '/chat/$chatId'
+  fullPaths: '/' | '/chat' | '/context' | '/chat/$chatId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat' | '/chat/$chatId'
-  id: '__root__' | '/' | '/chat' | '/chat/$chatId'
+  to: '/' | '/chat' | '/context' | '/chat/$chatId'
+  id: '__root__' | '/' | '/chat' | '/context' | '/chat/$chatId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRouteWithChildren
+  ContextRoute: typeof ContextRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/context': {
+      id: '/context'
+      path: '/context'
+      fullPath: '/context'
+      preLoaderRoute: typeof ContextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chat': {
       id: '/chat'
       path: '/chat'
@@ -97,6 +114,7 @@ const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRouteWithChildren,
+  ContextRoute: ContextRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

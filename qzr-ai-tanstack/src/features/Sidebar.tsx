@@ -1,6 +1,7 @@
 import SidebarChatsList from "#/features/sidebar/chats/SidebarChatsList";
 import SidebarDeleteChatDialog from "#/features/sidebar/chats/SidebarDeleteChatDialog";
 import SidebarContent from "#/features/sidebar/composition/SidebarContent";
+import SidebarContextButton from "#/features/sidebar/composition/SidebarContextButton";
 import SidebarHeader from "#/features/sidebar/composition/SidebarHeader";
 import SidebarNewChatButton from "#/features/sidebar/composition/SidebarNewChatButton";
 import SidebarNewChatSection from "#/features/sidebar/composition/SidebarNewChatSection";
@@ -48,6 +49,11 @@ function Sidebar(props: SidebarProps) {
               onNavigate={closeSidebarOnMobile}
             />
           </SidebarNewChatSection>
+
+          <SidebarContextButton
+            expanded={isExpanded}
+            onNavigate={closeSidebarOnMobile}
+          />
 
           <SidebarChatsList
             chats={chats}
