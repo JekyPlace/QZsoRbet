@@ -3,12 +3,13 @@ import type { ContextPageState } from "./contextPage.brain";
 
 type ContextDropzoneProps = Pick<
   ContextPageState,
-  | "acceptedFiles"
   | "error"
   | "handleDragLeave"
   | "handleDragOver"
   | "handleDrop"
   | "isDragging"
+  | "isUploading"
+  | "uploadedFiles"
 >;
 
 export default function ContextDropzone(props: ContextDropzoneProps) {
@@ -31,21 +32,34 @@ export default function ContextDropzone(props: ContextDropzoneProps) {
         Sono accettati solo file .csv e .pdf
       </p>
 
+      {props.isUploading && (
+        <p className="mt-4 mb-0 text-sm font-bold text-black" role="status">
+          Upload e indicizzazione in corso...
+        </p>
+      )}
+
       {props.error && (
         <p className="mt-4 mb-0 text-sm font-bold text-black" role="alert">
           {props.error}
         </p>
       )}
 
-      {props.acceptedFiles.length > 0 && (
+      {props.uploadedFiles.length > 0 && (
         <ul className="mt-5 grid w-full max-w-md list-none gap-2 p-0">
-          {props.acceptedFiles.map((file) => (
+          {props.uploadedFiles.map((upload) => (
             <li
-              key={`${file.name}-${file.size}`}
+              key={upload.file.storedName}
               className="flex min-w-0 items-center gap-2 rounded-full bg-[#fff333] px-3 py-2 text-left text-xs font-medium"
             >
               <FileText size={14} className="shrink-0" />
-              <span className="min-w-0 flex-1 truncate">{file.name}</span>
+              <span className="min-w-0 flex-1 truncate">
+                {upload.file.name}
+              </span>
+              <span className="shrink-0 font-mono text-[0.62rem] text-black/50">
+                {upload.indexing.skipped
+                  ? "vuoto"
+                  : `${upload.indexing.chunks} chunk`}
+              </span>
             </li>
           ))}
         </ul>

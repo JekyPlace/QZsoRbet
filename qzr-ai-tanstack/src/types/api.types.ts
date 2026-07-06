@@ -23,3 +23,25 @@ export type ChatMessageBody = {
 export type OllamaModel = {
   name: string;
 };
+
+export type ContextFile = {
+  name: string;
+  storedName: string;
+  type: "csv" | "pdf";
+  size: number;
+  uploadedAt: string;
+};
+
+export type ContextUploadResponse = {
+  file: {
+    name: string;
+    storedName: string;
+    type: "csv" | "pdf";
+    size: number;
+  };
+  indexing: {
+    filePath: string;
+    chunks: number;
+    skipped: boolean;
+  };
+};

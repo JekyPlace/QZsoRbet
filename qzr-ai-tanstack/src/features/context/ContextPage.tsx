@@ -1,5 +1,6 @@
 import Sidebar from "#/features/Sidebar";
 import ContextDropzone from "./ContextDropzone";
+import ContextFileList from "./ContextFileList";
 import { useContextPage } from "./contextPage.brain";
 
 export default function ContextPage() {
@@ -20,6 +21,7 @@ export default function ContextPage() {
             </p>
           </div>
           <ContextDropzone {...contextPage} />
+          <ContextFileList {...contextPage} />
         </section>
       </main>
     </div>

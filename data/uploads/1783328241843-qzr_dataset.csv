@@ -1,0 +1,127 @@
+id,category,prompt,response,source
+qzr_001,company_identity,What is QZR?,"QZR is a Lucca-based studio passionate about design and code. It combines visual design and web technologies to create interactive, immersive, engaging, and effective digital experiences.",user/qzrstudio.com
+qzr_002,company_identity,Where is QZR based?,"QZR is based in Lucca, Tuscany, Italy.",user/qzrstudio.com
+qzr_003,company_identity,When was QZR founded?,QZR srl was founded in Lucca in 2013.,user/qzrstudio.com
+qzr_004,company_identity,What kind of company is QZR srl?,"QZR srl is a design and technology studio focused on visual communication, web experiences, digital products, and interactive solutions.",user/qzrstudio.com
+qzr_005,company_identity,What is QZR's main philosophy?,"QZR's philosophy is to transform ideas into engaging and effective digital solutions by blending design, code, experimentation, and technology.",user/qzrstudio.com
+qzr_006,company_identity,What does QZR combine in its work?,"QZR combines visual design, web technologies, code, and experimentation to build interactive and immersive experiences.",user/qzrstudio.com
+qzr_007,company_identity,How should QZR describe itself in one sentence?,"QZR is a design and code studio from Lucca that creates engaging digital experiences through visual design, web technology, and experimentation.",user/qzrstudio.com
+qzr_008,company_identity,Is QZR a traditional software house?,"QZR is not only a traditional software house. It is a hybrid studio that connects design, code, visual culture, digital communication, and interactive experiences.",user/qzrstudio.com
+qzr_009,company_identity,What makes QZR different?,"QZR stands out because it brings together design sensitivity, technical implementation, and a strong experimental attitude toward digital media.",user/qzrstudio.com
+qzr_010,company_identity,What is the tone of QZR's brand?,"QZR's brand tone is creative, direct, contemporary, experimental, and confident, with a strong focus on design and technology.",user/qzrstudio.com
+qzr_011,brand_identity,What are QZR's main brand colors?,QZR's main brand colors are yellow and black.,user/qzrstudio.com
+qzr_012,brand_identity,Which colors should be used for QZR branded interfaces?,"QZR branded interfaces should mainly use yellow and black, with enough contrast, clean spacing, and a contemporary visual style.",user/qzrstudio.com
+qzr_013,brand_identity,How should yellow and black be used in QZR's communication?,"Yellow can be used as a strong accent or primary visual signal, while black can provide contrast, structure, and a bold editorial look.",user/qzrstudio.com
+qzr_014,brand_identity,What visual feeling do QZR's colors create?,"The yellow and black palette creates a bold, energetic, recognizable, and experimental visual identity.",user/qzrstudio.com
+qzr_015,brand_identity,Can QZR use a minimal visual style?,"Yes. QZR can use a minimal style, especially when yellow and black are used with strong typography, clean layouts, and precise interaction design.",user/qzrstudio.com
+qzr_016,services,What services does QZR offer?,"QZR works across visual design, web design, web development, digital communication, interactive experiences, and experimental digital projects.",user/qzrstudio.com
+qzr_017,services,Does QZR work with web technologies?,"Yes. QZR uses web technologies to create interactive, immersive, and effective digital experiences.",user/qzrstudio.com
+qzr_018,services,Does QZR work only on websites?,"No. QZR works on websites and digital experiences, but also on visual projects, communication systems, experimental research, and interactive formats.",user/qzrstudio.com
+qzr_019,services,Can QZR design and build a website?,"Yes. QZR can approach a website from both the visual design side and the technical development side, creating a coherent digital experience.",user/qzrstudio.com
+qzr_020,services,Can QZR help with digital communication?,"Yes. QZR can help transform ideas, content, and messages into effective digital communication systems.",user/qzrstudio.com
+qzr_021,services,Can QZR create immersive experiences?,"Yes. QZR focuses on interactive and immersive experiences, using design and technology together.",user/qzrstudio.com
+qzr_022,services,Does QZR work with prototypes?,"Yes. QZR's experimental approach includes prototyping, testing, and exploring new visual or technological solutions.",user/qzrstudio.com
+qzr_023,services,What is QZR's approach to design and development?,"QZR treats design and development as connected parts of the same process: concept, visual direction, interaction, implementation, and refinement.",user/qzrstudio.com
+qzr_024,services,What kind of digital solutions can QZR create?,"QZR can create websites, interactive interfaces, digital experiences, visual systems, communication projects, and experimental technology-driven outputs.",user/qzrstudio.com
+qzr_025,services,Can QZR support a project from idea to launch?,"Yes. QZR can help shape an idea, design the visual system, develop the digital product, test it, and bring it online.",user/qzrstudio.com
+qzr_026,sectors,Does QZR work with nonprofit organizations?,"Yes. QZR works with different contexts including nonprofit, business, education, culture, research, and publishing.",user/qzrstudio.com
+qzr_027,sectors,Does QZR work with businesses?,"Yes. QZR works with different contexts including nonprofit, business, education, culture, research, and publishing.",user/qzrstudio.com
+qzr_028,sectors,Does QZR work with education?,"Yes. QZR works with different contexts including nonprofit, business, education, culture, research, and publishing.",user/qzrstudio.com
+qzr_029,sectors,Does QZR work with culture?,"Yes. QZR works with different contexts including nonprofit, business, education, culture, research, and publishing.",user/qzrstudio.com
+qzr_030,sectors,Does QZR work with research?,"Yes. QZR works with different contexts including nonprofit, business, education, culture, research, and publishing.",user/qzrstudio.com
+qzr_031,sectors,Does QZR work with publishing?,"Yes. QZR works with different contexts including nonprofit, business, education, culture, research, and publishing.",user/qzrstudio.com
+qzr_032,sectors,In which sectors does QZR work?,"QZR works in many contexts, including nonprofit, business, education, culture, research, and publishing.",user/qzrstudio.com
+qzr_033,sectors,Is QZR suitable for cultural projects?,"Yes. QZR is suitable for cultural projects because it combines visual design, communication, digital storytelling, and technology.",user/qzrstudio.com
+qzr_034,sectors,Is QZR suitable for education projects?,"Yes. QZR can work on education projects by creating clear, engaging, and interactive digital experiences.",user/qzrstudio.com
+qzr_035,sectors,Is QZR suitable for research communication?,"Yes. QZR can help research projects become more understandable and engaging through design, digital tools, and visual communication.",user/qzrstudio.com
+qzr_036,sectors,Is QZR suitable for publishing projects?,"Yes. QZR works in publishing contexts and can support editorial, visual, and digital communication projects.",user/qzrstudio.com
+qzr_037,projects,Is Martinelli Luce listed among QZR projects? ,Yes. Martinelli Luce is listed among the projects shown on QZR's website.,qzrstudio.com
+qzr_038,projects,Is Iper Lezioni Americane listed among QZR projects? ,Yes. Iper Lezioni Americane is listed among the projects shown on QZR's website.,qzrstudio.com
+qzr_039,projects,Is Lucca Plus listed among QZR projects? ,Yes. Lucca Plus is listed among the projects shown on QZR's website.,qzrstudio.com
+qzr_040,projects,Is Metaflags listed among QZR projects? ,Yes. Metaflags is listed among the projects shown on QZR's website.,qzrstudio.com
+qzr_041,projects,Is Mao Tianlonghan listed among QZR projects? ,Yes. Mao Tianlonghan is listed among the projects shown on QZR's website.,qzrstudio.com
+qzr_042,projects,Is Galleria Nazionale dell'Umbria listed among QZR projects? ,Yes. Galleria Nazionale dell'Umbria is listed among the projects shown on QZR's website.,qzrstudio.com
+qzr_043,projects,Is Vorticando listed among QZR projects? ,Yes. Vorticando is listed among the projects shown on QZR's website.,qzrstudio.com
+qzr_044,projects,Can you name some projects shown by QZR?,"Some projects shown by QZR include Martinelli Luce, Iper Lezioni Americane, Lucca Plus, Metaflags, Mao Tianlonghan, Galleria Nazionale dell'Umbria, and Vorticando.",qzrstudio.com
+qzr_045,projects,What do QZR's projects suggest about the studio?,"QZR's projects suggest that the studio works across culture, business, visual communication, technology, and interactive digital experiences.",user/qzrstudio.com
+qzr_046,projects,Does QZR present its work through a project portfolio?,Yes. QZR presents a project section where selected works and collaborations are shown.,user/qzrstudio.com
+qzr_047,experimentation,What is QZR Deep?,QZR Deep is the area where QZR collects materials from its experiments and research.,user/qzrstudio.com
+qzr_048,experimentation,Does QZR experiment with artificial intelligence?,"Yes. QZR's website includes AI-related experimentation, including outputs from tools such as GPT, Midjourney, and LLaMA.",user/qzrstudio.com
+qzr_049,experimentation,Does QZR experiment with AR and VR?,"Yes. QZR has experimental material related to AR and VR, exploring other worlds and immersive technologies.",user/qzrstudio.com
+qzr_050,experimentation,What does QZR's experimental work show?,"QZR's experimental work shows curiosity toward new technologies, visual languages, prototypes, AI outputs, AR, VR, and alternative production processes.",user/qzrstudio.com
+qzr_051,experimentation,What is the purpose of experimentation at QZR?,"Experimentation helps QZR explore new creative directions, test technologies, prototype ideas, and expand the possibilities of design and code.",user/qzrstudio.com
+qzr_052,experimentation,Does QZR use AI as part of creative research?,"Yes. QZR explores AI as part of creative research and experimentation, especially for visual and conceptual outputs.",user/qzrstudio.com
+qzr_053,experimentation,How should QZR talk about AI?,"QZR should talk about AI as a tool for experimentation, creative research, prototyping, and exploring new visual or interactive possibilities.",user/qzrstudio.com
+qzr_054,experimentation,Does QZR explore physical and spatial communication?,"Yes. QZR's experimental materials include setups, prototypes, signage, maps, and spatial communication projects.",user/qzrstudio.com
+qzr_055,experimentation,What is QZRisograph?,"QZRisograph is one of QZR's experimental areas focused on risograph-style printing tests, production experiments, and visual research.",user/qzrstudio.com
+qzr_056,experimentation,What does 'Time for a New Yellow' refer to?,"'Time for a New Yellow' is one of QZR's experimental folders, focused on how a new yellow was found and tested.",user/qzrstudio.com
+qzr_057,contact,What is QZR's website?,QZR's website is qzrstudio.com.,user/qzrstudio.com
+qzr_058,contact,What is QZR's email address?,QZR's public email address is info@qzrstudio.com.,user/qzrstudio.com
+qzr_059,contact,What is QZR's phone number?,QZR's public phone number is +39 0583 1553511.,user/qzrstudio.com
+qzr_060,contact,What is QZR's VAT number?,QZR's VAT number is IT02327660466.,user/qzrstudio.com
+qzr_061,contact,Where can someone find QZR online?,"Someone can find QZR on its website, qzrstudio.com, and through its public Instagram link.",user/qzrstudio.com
+qzr_062,contact,What address is shown on QZR's website?,"QZR's website shows an address in Lucca: Via delle Tagliate di San Marco 130, 55100 Lucca LU. It also displays Via della Chiesa XXXII, trav. 1, n. 231, 55100 Lucca.",user/qzrstudio.com
+qzr_063,contact,How can a client contact QZR?,A client can contact QZR through the public email info@qzrstudio.com or by calling +39 0583 1553511.,user/qzrstudio.com
+qzr_064,contact,What city should be associated with QZR?,"QZR should be associated with Lucca, Tuscany, Italy.",user/qzrstudio.com
+qzr_065,client_faq,Why should a client choose QZR?,"A client should choose QZR when they need a studio that can combine visual design, code, digital strategy, and experimentation into a coherent digital experience.",user/qzrstudio.com
+qzr_066,client_faq,What kind of client is QZR ideal for?,"QZR is ideal for clients who need strong visual direction, custom digital communication, interactive web experiences, and a design-driven approach to technology.",user/qzrstudio.com
+qzr_067,client_faq,How does QZR transform an idea into a digital product?,"QZR starts from the idea, defines the visual and interaction direction, builds the technical solution, tests the experience, and refines it into an engaging digital product.",user/qzrstudio.com
+qzr_068,client_faq,Can QZR work with complex visual identities?,"Yes. QZR can work with complex visual identities and translate them into digital systems, websites, interfaces, and interactive experiences.",user/qzrstudio.com
+qzr_069,client_faq,Can QZR support a brand that needs a bold online presence?,"Yes. QZR is well suited for brands that want a bold, contemporary, and memorable online presence.",user/qzrstudio.com
+qzr_070,client_faq,How would QZR explain its work to a new client?,"QZR helps clients turn ideas into engaging digital solutions by combining visual design, web technologies, code, and experimentation.",user/qzrstudio.com
+qzr_071,client_faq,What should a client expect from QZR?,"A client should expect a design-focused, technically aware, experimental, and collaborative approach to digital communication.",user/qzrstudio.com
+qzr_072,client_faq,Does QZR care about both aesthetics and functionality?,"Yes. QZR cares about both aesthetics and functionality, treating visual quality and technical execution as connected parts of the same experience.",user/qzrstudio.com
+qzr_073,client_faq,Can QZR create an effective user experience?,"Yes. QZR can create effective user experiences by combining clear design, interaction, web technology, and attention to the final user.",user/qzrstudio.com
+qzr_074,client_faq,How does QZR approach digital storytelling?,"QZR approaches digital storytelling by combining content, visual rhythm, interaction, and technology to make information more engaging.",user/qzrstudio.com
+qzr_075,assistant_behavior,How should an AI assistant answer questions about QZR?,"An AI assistant should answer clearly, in English, using verified information about QZR and avoiding unsupported claims.",user/qzrstudio.com
+qzr_076,assistant_behavior,What should the assistant say if it does not know an answer about QZR?,The assistant should say that the information is not available in the current dataset and suggest contacting QZR directly through its public channels.,user/qzrstudio.com
+qzr_077,assistant_behavior,Should the assistant invent QZR services that are not mentioned?,"No. The assistant should avoid inventing details and should stay close to the available information about QZR's design, code, web, interactive, and experimental work.",user/qzrstudio.com
+qzr_078,assistant_behavior,How should the assistant describe QZR's location?,"The assistant should describe QZR as based in Lucca, Tuscany, Italy.",user/qzrstudio.com
+qzr_079,assistant_behavior,How should the assistant describe QZR's style?,"The assistant should describe QZR's style as bold, contemporary, experimental, design-driven, and strongly connected to yellow and black.",user/qzrstudio.com
+qzr_080,assistant_behavior,What should the assistant do when asked for QZR's contact details?,"The assistant should provide only the public contact details available in the dataset, such as the website, email, phone number, and public address.",user/qzrstudio.com
+qzr_081,assistant_behavior,What should the assistant avoid when answering about QZR?,"The assistant should avoid making legal, financial, or commercial promises, and should not claim capabilities or clients that are not supported by the dataset.",user/qzrstudio.com
+qzr_082,assistant_behavior,Can the assistant answer in a promotional tone?,"Yes, but the assistant should remain accurate, professional, and grounded in the information available about QZR.",user/qzrstudio.com
+qzr_083,assistant_behavior,What language should this dataset use?,This dataset uses English prompts and English responses.,user/qzrstudio.com
+qzr_084,assistant_behavior,What format is this dataset prepared for?,This dataset is prepared as a CSV file with prompt-response pairs for use in a local language model workflow.,user/qzrstudio.com
+qzr_085,local_model,Can this CSV be used to train a local model?,Yes. This CSV can be used as a small prompt-response dataset for fine-tuning or for building a local assistant around QZR-related questions.,user/qzrstudio.com
+qzr_086,local_model,Is this dataset enough to fully train a production model?,"No. This is a starter dataset. For a production model, it should be expanded, cleaned, validated, and combined with a retrieval system over official company documents.",user/qzrstudio.com
+qzr_087,local_model,Is fine-tuning the only way to use this dataset?,"No. The dataset can be used for fine-tuning, evaluation, prompt testing, or as seed content for a retrieval-augmented generation system.",user/qzrstudio.com
+qzr_088,local_model,How should this dataset be expanded?,"It should be expanded with real service descriptions, case studies, project summaries, tone-of-voice examples, internal FAQs, and validated client-facing answers.",user/qzrstudio.com
+qzr_089,local_model,What is a safer alternative to fine-tuning for company knowledge?,"A safer alternative is RAG, where the model retrieves answers from verified company documents instead of memorizing everything during training.",user/qzrstudio.com
+qzr_090,local_model,Why is RAG useful for QZR?,"RAG is useful because QZR's projects, services, and contact details can change over time, and retrieval keeps answers grounded in updated source documents.",user/qzrstudio.com
+qzr_091,local_model,Should the local model answer outside the dataset?,The local model should be instructed to avoid unsupported answers and to say when information is not available in the dataset.,user/qzrstudio.com
+qzr_092,local_model,What columns are useful in a prompt-response CSV?,"Useful columns include id, category, prompt, response, and source.",user/qzrstudio.com
+qzr_093,local_model,How can this dataset be evaluated?,"The dataset can be evaluated by asking the model the same prompts and checking whether the answers are accurate, consistent, and aligned with QZR's tone.",user/qzrstudio.com
+qzr_094,local_model,What is the first step after creating this CSV?,"The first step is to review the answers, correct any company-specific details, and decide whether to use the file for fine-tuning, RAG, or evaluation.",user/qzrstudio.com
+qzr_095,studio_team,What is described in QZR Studio section?,"The Studio section describes QZR as a studio that blends visual design, web development, and technological innovation, also experimenting with augmented reality, installations, and game design.",qzrstudio.com/studio/
+qzr_096,studio_team,How does QZR describe its team story?,"QZR describes its story as the sum of each person in the studio, with people coming from different parts of Italy and bringing different experiences and backgrounds.",qzrstudio.com/studio/
+qzr_097,studio_team,Who are the current people listed in QZR studio team?,"The current people listed in QZR studio team are Arnaldo Filippini, Luigi Bevilacqua, Luca Pietrini, Rosi Durantini, Beatrice Ulivi, and Jacopo Gianfaldoni.",qzrstudio.com/studio/
+qzr_098,studio_team,Who is Arnaldo Filippini at QZR?,Arnaldo Filippini is responsible for graphic design at QZR.,qzrstudio.com/studio/
+qzr_099,studio_team,What is Arnaldo Filippini responsible for at QZR?,Arnaldo Filippini is responsible for graphic design at QZR and represents the analog side of the studio.,qzrstudio.com/studio/
+qzr_100,studio_team,Who is Luigi Bevilacqua at QZR?,Luigi Bevilacqua is responsible for software development at QZR.,qzrstudio.com/studio/
+qzr_101,studio_team,What is Luigi Bevilacqua responsible for at QZR?,Luigi Bevilacqua is responsible for software development at QZR and represents the digital side of the studio.,qzrstudio.com/studio/
+qzr_102,studio_team,Who is Luca Pietrini at QZR?,Luca Pietrini is a developer at QZR.,qzrstudio.com/studio/
+qzr_103,studio_team,What does Luca Pietrini do at QZR?,"Luca Pietrini works as a developer at QZR, with a background in computer science, web programming, and game design.",qzrstudio.com/studio/
+qzr_104,studio_team,Who is Rosi Durantini at QZR?,Rosi Durantini is a developer at QZR.,qzrstudio.com/studio/
+qzr_105,studio_team,What does Rosi Durantini do at QZR?,Rosi Durantini works as a developer at QZR and combines technology with a passion for visual art.,qzrstudio.com/studio/
+qzr_106,studio_team,Who is Beatrice Ulivi at QZR?,Beatrice Ulivi works as a graphic designer at QZR.,qzrstudio.com/studio/
+qzr_107,studio_team,What does Beatrice Ulivi do at QZR?,Beatrice Ulivi works in graphic design at QZR and experiments with publishing and photography.,qzrstudio.com/studio/
+qzr_108,studio_team,Who is Jacopo Gianfaldoni at QZR?,Jacopo Gianfaldoni is a developer at QZR.,qzrstudio.com/studio/
+qzr_109,studio_team,What does Jacopo Gianfaldoni do at QZR?,"Jacopo Gianfaldoni works as a developer at QZR, with a background in Graphic Design and Full-Stack development, especially Front-End and design care.",qzrstudio.com/studio/
+qzr_110,studio_team,Which current QZR team members are developers?,"The current QZR team members listed as developers are Luca Pietrini, Rosi Durantini, and Jacopo Gianfaldoni. Luigi Bevilacqua is responsible for software development.",qzrstudio.com/studio/
+qzr_111,studio_team,Which current QZR team members work on graphic design?,"Arnaldo Filippini is responsible for graphic design at QZR, and Beatrice Ulivi works as a graphic designer.",qzrstudio.com/studio/
+qzr_112,studio_team,Which old team members should not be listed as current QZR staff?,"The current Studio page should be used as the source of truth for staff. Salvatore Corsi, Simone Saletti, and Lorenzo Ercoli should not be listed as current QZR team members unless a newer official source confirms it.",qzrstudio.com/studio/
+qzr_113,studio_collaborators,Does QZR work with collaborators?,Yes. QZR states that it works every day with many friends and collaborators to create increasingly strong projects.,qzrstudio.com/studio/
+qzr_114,studio_collaborators,Who are QZR collaborators?,"QZR collaborators listed on the Studio page include Daniele Chatrian, Enrico Granzotto, Lisa Nieri, Lisa Zanet, Laura Belli, Laura Falorni, Marta Fioravanti, and Marco Bevacqua.",qzrstudio.com/studio/
+qzr_115,studio_collaborators,Who is Daniele Chatrian in QZR collaborators?,Daniele Chatrian is listed among QZR collaborators as a videomaker.,qzrstudio.com/studio/
+qzr_116,studio_collaborators,Who is Enrico Granzotto in QZR collaborators?,Enrico Granzotto is listed among QZR collaborators as a transmedia researcher.,qzrstudio.com/studio/
+qzr_117,studio_collaborators,Who is Lisa Nieri in QZR collaborators?,Lisa Nieri is listed among QZR collaborators as a social media manager.,qzrstudio.com/studio/
+qzr_118,studio_collaborators,Who is Lisa Zanet in QZR collaborators?,Lisa Zanet is listed among QZR collaborators as a graphic designer.,qzrstudio.com/studio/
+qzr_119,studio_collaborators,Who is Laura Belli in QZR collaborators?,Laura Belli is listed among QZR collaborators as an illustrator.,qzrstudio.com/studio/
+qzr_120,studio_collaborators,Who is Laura Falorni in QZR collaborators?,Laura Falorni is listed among QZR collaborators as a graphic designer.,qzrstudio.com/studio/
+qzr_121,studio_collaborators,Who is Marta Fioravanti in QZR collaborators?,Marta Fioravanti is listed among QZR collaborators as an illustrator and graphic designer.,qzrstudio.com/studio/
+qzr_122,studio_collaborators,Who is Marco Bevacqua in QZR collaborators?,Marco Bevacqua is listed among QZR collaborators as a photographer.,qzrstudio.com/studio/
+qzr_123,studio_partners,Does QZR cooperate with partner studios?,Yes. QZR cooperates with other studios to create larger and more complete projects.,qzrstudio.com/studio/
+qzr_124,studio_partners,Who are QZR partner studios?,"QZR partner studios include Muttnik, BCPT, LS graphic design, IDA studio, Moonscape, Due Studio, Studio SMV, and Kleine studio.",qzrstudio.com/studio/
+qzr_125,studio_partners,Where are QZR partner studios based?,"QZR partner studios are based in cities including Firenze, Perugia, Milano, Rovigo, Pisa, and Varese.",qzrstudio.com/studio/
+qzr_126,assistant_behavior,How should the assistant answer questions about QZR staff?,The assistant should answer staff questions using the current QZR Studio page as the source of truth and should avoid listing outdated team members as current staff.,qzrstudio.com/studio/

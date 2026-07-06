@@ -2,12 +2,12 @@
 
 QZsoRbet e una web app full-stack per interrogare file CSV e PDF tramite una chat AI locale.
 
-L'app legge CSV e PDF da una cartella configurabile, li indicizza in un vector database e usa quei dati come contesto per rispondere alle domande dell'utente.
+L'app permette di caricare documenti CSV/PDF, li salva in locale, li indicizza in un vector database e usa quei dati come contesto per rispondere alle domande dell'utente.
 
 In pratica:
 
 ```txt
-CSV/PDF -> chunks -> embeddings -> Qdrant -> retrieval semantico -> Ollama -> risposta in chat
+upload CSV/PDF -> chunks -> embeddings -> Qdrant -> retrieval semantico -> Ollama -> risposta in chat
 ```
 
 ## Avvio Rapido
@@ -29,11 +29,13 @@ ollama pull embeddinggemma
 ollama pull gemma3:12b
 ```
 
-4. Metti i file `.csv` e `.pdf` in:
+4. Se vuoi indicizzare documenti gia presenti al setup, metti i file `.csv` e `.pdf` in:
 
 ```txt
 data/csv
 ```
+
+Puoi anche saltare questo step e caricare i documenti dopo dall'app, dalla pagina "Fornisci contesto".
 
 5. Dalla root del progetto esegui il setup completo:
 
@@ -53,10 +55,13 @@ npm run dev:frontend
 http://localhost:3000
 ```
 
-Il comando `npm run setup` installa le dipendenze, crea gli env mancanti, avvia backend/Postgres/Qdrant, applica le migration e indicizza CSV/PDF.
+Il comando `npm run setup` installa le dipendenze, crea gli env mancanti, avvia backend/Postgres/Qdrant, applica le migration e indicizza eventuali CSV/PDF gia presenti nella cartella sorgente.
 
 ## Cosa Fa
 
+- carica file `.csv` e `.pdf` dalla UI
+- salva i file caricati in una cartella locale
+- mostra la lista dei file caricati nella pagina "Fornisci contesto"
 - indicizza file `.csv`
 - indicizza file `.pdf`
 - estrae testo dai PDF e lo divide in chunk
@@ -67,6 +72,7 @@ Il comando `npm run setup` installa le dipendenze, crea gli env mancanti, avvia 
 - legge i modelli installati in Ollama e li rende selezionabili dalla UI
 - salva chat e messaggi in Postgres
 - mostra le risposte in streaming nel frontend React
+- permette di copiare le risposte della chat
 
 Lo use case tipico e un assistente AI privato che risponde usando dati aziendali locali, senza mandare CSV o PDF a servizi cloud.
 
@@ -86,6 +92,7 @@ Il repository e una monorepo:
 ├── docker-compose.yml
 ├── package.json
 ├── data/csv/
+├── data/uploads/
 ├── qzr-ai-be/
 └── qzr-ai-tanstack/
 ```
@@ -132,11 +139,43 @@ Poi selezionali direttamente dall'interfaccia.
 
 Con 8 GB di RAM l'app puo partire, ma `gemma3:12b` puo essere lento o pesante. In quel caso conviene installare un modello piu piccolo e selezionarlo dalla UI.
 
-## Setup Documenti CSV/PDF
+## Documenti CSV/PDF
 
 L'app supporta sia `.csv` che `.pdf`.
 
-Scelta semplice: metti i documenti in:
+Ci sono due modi per fornire documenti.
+
+### Upload dall'app
+
+Dalla sidebar apri la pagina "Fornisci contesto" e trascina un file `.csv` o `.pdf`.
+
+Il backend:
+
+1. salva il file nella cartella upload
+2. avvia subito l'indicizzazione
+3. aggiorna la lista dei file caricati
+
+Di default i file caricati vengono salvati in:
+
+```txt
+data/uploads
+```
+
+In Docker la cartella viene montata come:
+
+```txt
+/app/uploads
+```
+
+Puoi cambiare destinazione configurando:
+
+```env
+UPLOAD_SOURCE_DIR=/percorso/della/cartella/uploads
+```
+
+### Indicizzazione iniziale da cartella
+
+Per indicizzare documenti gia presenti al setup, metti i file in:
 
 ```txt
 data/csv
@@ -181,6 +220,8 @@ I due indicizzatori sono separati:
 - `index:csv` indicizza i CSV
 - `index:pdf` indicizza i PDF
 - `index:all` esegue entrambi
+
+Nota: l'upload dall'app indicizza subito il singolo file caricato. I comandi `index:*` servono invece per indicizzare o reindicizzare documenti presenti nella cartella sorgente.
 
 ## Primo Avvio Completo
 
@@ -236,7 +277,7 @@ npm run dev:frontend
 
 Non serve reindicizzare ogni volta.
 
-Reindicizza solo quando cambi CSV/PDF o quando Qdrant e vuoto:
+Reindicizza solo quando cambi manualmente CSV/PDF nella cartella sorgente o quando Qdrant e vuoto:
 
 ```bash
 npm run docker:index
@@ -253,6 +294,8 @@ Se aggiungi solo PDF:
 ```bash
 npm run index:pdf
 ```
+
+Se invece carichi file dalla pagina "Fornisci contesto", l'indicizzazione parte automaticamente dopo l'upload.
 
 Applica le migration solo quando il DB e nuovo o ci sono nuove migration:
 
@@ -374,6 +417,7 @@ QDRANT_URL=http://qdrant:6333
 OLLAMA_URL=http://host.docker.internal:11434
 CSV_SOURCE_DIR=/app/data
 PDF_SOURCE_DIR=/app/data
+UPLOAD_SOURCE_DIR=/app/uploads
 ```
 
 In locale, se Qdrant gira tramite questo `docker-compose.yml`, usa la porta host `6335`:
@@ -421,6 +465,7 @@ Non committare:
 - `node_modules`
 - `dist`
 - CSV/PDF reali dentro `data/csv`
+- CSV/PDF caricati dentro `data/uploads`
 
 I template da committare sono:
 
@@ -498,6 +543,32 @@ CSV_HOST_SOURCE_DIR=./data/csv
 ```
 
 Se usi una cartella custom, deve esistere sulla tua macchina e contenere file `.csv` o `.pdf`.
+
+### Upload CSV/PDF non funziona
+
+Controlla che il backend sia stato riavviato dopo le ultime modifiche:
+
+```bash
+npm --prefix qzr-ai-be run dev
+```
+
+oppure, se usi Docker:
+
+```bash
+docker compose up -d --build
+```
+
+Il frontend deve chiamare:
+
+```txt
+http://localhost:8555/context/upload
+```
+
+Se hai un file `qzr-ai-tanstack/.env`, verifica:
+
+```env
+VITE_API_BASE_URL=http://localhost:8555
+```
 
 ### Warning `standardFontDataUrl` durante `index:pdf`
 

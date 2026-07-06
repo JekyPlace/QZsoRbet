@@ -256,6 +256,28 @@ async function upsertChunks(chunks: CsvChunk[]): Promise<void> {
   }
 }
 
+export async function indexCsvFile(filePath: string) {
+  const text = await readFile(filePath, "utf8");
+  const rows = parseCsv(text, detectDelimiter(text));
+  const chunks = createChunks(filePath, rows);
+
+  if (chunks.length === 0) {
+    return {
+      filePath,
+      chunks: 0,
+      skipped: true,
+    };
+  }
+
+  await upsertChunks(chunks);
+
+  return {
+    filePath,
+    chunks: chunks.length,
+    skipped: false,
+  };
+}
+
 async function main() {
   const sourceStats = await stat(SOURCE_DIR);
   if (!sourceStats.isDirectory()) {
@@ -272,20 +294,17 @@ async function main() {
   console.log(`Found ${files.length} CSV files in ${SOURCE_DIR}`);
 
   for (const [index, filePath] of files.entries()) {
-    const text = await readFile(filePath, "utf8");
-    const rows = parseCsv(text, detectDelimiter(text));
-    const chunks = createChunks(filePath, rows);
+    const result = await indexCsvFile(filePath);
 
-    if (chunks.length === 0) {
+    if (result.skipped) {
       console.log(
         `[${index + 1}/${files.length}] Skipped empty CSV: ${filePath}`,
       );
       continue;
     }
 
-    await upsertChunks(chunks);
     console.log(
-      `[${index + 1}/${files.length}] Indexed ${chunks.length} chunks: ${filePath}`,
+      `[${index + 1}/${files.length}] Indexed ${result.chunks} chunks: ${filePath}`,
     );
   }
 

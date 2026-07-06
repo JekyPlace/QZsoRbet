@@ -1,4 +1,10 @@
-import type { Chat, ChatMessageBody, OllamaModel } from "#/types/api.types";
+import type {
+  Chat,
+  ChatMessageBody,
+  ContextFile,
+  ContextUploadResponse,
+  OllamaModel,
+} from "#/types/api.types";
 
 type StreamEvent =
   | { event: "chunk"; data: { content: string } }
@@ -6,7 +12,7 @@ type StreamEvent =
   | { event: "error"; data: { error: string } };
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "").trim() ||
   "http://localhost:8555";
 
 export function apiUrl(path: string) {
@@ -144,4 +150,56 @@ export async function getChats() {
   }
 
   return response.json();
+}
+
+export async function getContextFiles(): Promise<ContextFile[]> {
+  const filesUrl = apiUrl("/context/files");
+  const response = await fetch(filesUrl);
+
+  if (!response.ok) {
+    throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const files = await response.json();
+
+  if (!Array.isArray(files)) {
+    throw new Error(`Risposta non valida da ${filesUrl}`);
+  }
+
+  return files as ContextFile[];
+}
+
+export async function uploadContextFile(
+  file: File,
+): Promise<ContextUploadResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const uploadUrl = apiUrl("/context/upload");
+
+  const response = await fetch(uploadUrl, {
+    method: "POST",
+    body: formData,
+  });
+
+  const responseText = await response.text();
+  const isJson = response.headers
+    .get("content-type")
+    ?.includes("application/json");
+  const data = isJson ? JSON.parse(responseText) : null;
+
+  if (!response.ok) {
+    throw new Error(
+      typeof data?.error === "string"
+        ? data.error
+        : `Errore HTTP ${response.status}: ${response.statusText} (${uploadUrl})`,
+    );
+  }
+
+  if (!data) {
+    throw new Error(
+      `Risposta non valida da ${uploadUrl}. Controlla che VITE_API_BASE_URL punti al backend.`,
+    );
+  }
+
+  return data as ContextUploadResponse;
 }

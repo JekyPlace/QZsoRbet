@@ -231,6 +231,27 @@ export async function getPdfContent(): Promise<PdfChunk[]> {
   return chunks;
 }
 
+export async function indexPdfFile(filePath: string) {
+  const text = await parsePdf(await readFile(filePath));
+  const chunks = createChunks(filePath, text);
+
+  if (chunks.length === 0) {
+    return {
+      filePath,
+      chunks: 0,
+      skipped: true,
+    };
+  }
+
+  await upsertChunks(chunks);
+
+  return {
+    filePath,
+    chunks: chunks.length,
+    skipped: false,
+  };
+}
+
 async function main() {
   const sourceStats = await stat(SOURCE_DIR);
   if (!sourceStats.isDirectory()) {
@@ -247,19 +268,17 @@ async function main() {
   console.log(`Found ${files.length} PDF files in ${SOURCE_DIR}`);
 
   for (const [index, filePath] of files.entries()) {
-    const text = await parsePdf(await readFile(filePath));
-    const chunks = createChunks(filePath, text);
+    const result = await indexPdfFile(filePath);
 
-    if (chunks.length === 0) {
+    if (result.skipped) {
       console.log(
         `[${index + 1}/${files.length}] Skipped empty PDF: ${filePath}`,
       );
       continue;
     }
 
-    await upsertChunks(chunks);
     console.log(
-      `[${index + 1}/${files.length}] Indexed ${chunks.length} chunks: ${filePath}`,
+      `[${index + 1}/${files.length}] Indexed ${result.chunks} chunks: ${filePath}`,
     );
   }
 

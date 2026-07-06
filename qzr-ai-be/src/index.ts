@@ -3,8 +3,8 @@ import cors from "cors";
 import express from "express";
 import chatRouter from "./routes/chat.js";
 import chatsRouter from "./routes/chats.js";
+import contextRouter from "./routes/context.js";
 import { getOllamaModels } from "./services/ai.api.js";
-import { getPdfContent } from "../scripts/index-pdf-to-qdrant.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 8555;
@@ -25,10 +25,7 @@ app.get("/models", async (_request, response) => {
 });
 app.use("/chat", chatRouter);
 app.use("/chats", chatsRouter);
-
-getPdfContent().then((content) => {
-  console.log(content);
-});
+app.use("/context", contextRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

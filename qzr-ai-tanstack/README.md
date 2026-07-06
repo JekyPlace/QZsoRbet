@@ -19,6 +19,8 @@ Il frontend legge dal backend:
 - lista chat
 - streaming risposte
 - modelli Ollama installati
+- upload documenti CSV/PDF
+- lista dei file caricati come contesto
 
 ## Avvio
 
@@ -72,14 +74,18 @@ I modelli chat vengono usati per generare le risposte.
 
 ## Documenti Supportati
 
-Il frontend interroga i dati indicizzati dal backend.
+Il frontend permette sia di interrogare i dati gia indicizzati sia di caricare nuovi documenti dalla pagina "Fornisci contesto".
 
 I documenti supportati sono:
 
 - CSV
 - PDF
 
-Per aggiungere o aggiornare documenti, usa i comandi dalla root:
+Dalla sidebar apri la pagina con icona cervello, poi trascina un file `.csv` o `.pdf`.
+
+Il backend salva il file, lo indicizza subito e il frontend aggiorna la lista dei file caricati.
+
+Per reindicizzare documenti presenti nella cartella sorgente, usa i comandi dalla root:
 
 ```bash
 npm run docker:index
