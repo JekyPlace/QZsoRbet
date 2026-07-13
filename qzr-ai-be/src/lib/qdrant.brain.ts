@@ -3,9 +3,9 @@ import type { DocumentContext } from "../types/api.types.js";
 
 const QDRANT_URL = process.env.QDRANT_URL ?? "http://localhost:6333";
 const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION ?? "csv_documents";
-const QDRANT_SEARCH_LIMIT = Number(process.env.QDRANT_SEARCH_LIMIT ?? 5);
+const QDRANT_SEARCH_LIMIT = Number(process.env.QDRANT_SEARCH_LIMIT ?? 8);
 const QDRANT_SCORE_THRESHOLD = Number(
-  process.env.QDRANT_SCORE_THRESHOLD ?? 0.45,
+  process.env.QDRANT_SCORE_THRESHOLD ?? 0.35,
 );
 const QDRANT_TIMEOUT_MS = Number(process.env.QDRANT_TIMEOUT_MS ?? 3000);
 

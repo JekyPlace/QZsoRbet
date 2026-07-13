@@ -1,0 +1,96 @@
+[debug] PDF chunks before embedding: showing 5/7706
+
+--- chunk before embedding ---
+source: Guida-per-redigere-documenti-accessibili.pdf
+page: 1
+chunkIndex: 0
+chars: 244
+
+Documento PDF: Guida-per-redigere-documenti-accessibili.pdf
+
+Pagina: 1
+
+
+
+Dipartimento delle Finanze Ministero dell’Economia e delle Finanze, Sogéi
+GUIDA PER REDIGERE DOCUMENTI DI TESTO ACCESSIBILI
+DA TRASFORMARE IN PDF ACCESSIBILI
+VERSIONE 1.0
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: Guida-per-redigere-documenti-accessibili.pdf
+page: 1
+chunkIndex: 1
+chars: 243
+
+Documento PDF: Guida-per-redigere-documenti-accessibili.pdf
+
+Pagina: 1
+
+
+
+ipartimento delle Finanze Ministero dell’Economia e delle Finanze, Sogéi
+GUIDA PER REDIGERE DOCUMENTI DI TESTO ACCESSIBILI
+DA TRASFORMARE IN PDF ACCESSIBILI
+VERSIONE 1.0
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: Guida-per-redigere-documenti-accessibili.pdf
+page: 1
+chunkIndex: 2
+chars: 242
+
+Documento PDF: Guida-per-redigere-documenti-accessibili.pdf
+
+Pagina: 1
+
+
+
+partimento delle Finanze Ministero dell’Economia e delle Finanze, Sogéi
+GUIDA PER REDIGERE DOCUMENTI DI TESTO ACCESSIBILI
+DA TRASFORMARE IN PDF ACCESSIBILI
+VERSIONE 1.0
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: Guida-per-redigere-documenti-accessibili.pdf
+page: 1
+chunkIndex: 3
+chars: 241
+
+Documento PDF: Guida-per-redigere-documenti-accessibili.pdf
+
+Pagina: 1
+
+
+
+artimento delle Finanze Ministero dell’Economia e delle Finanze, Sogéi
+GUIDA PER REDIGERE DOCUMENTI DI TESTO ACCESSIBILI
+DA TRASFORMARE IN PDF ACCESSIBILI
+VERSIONE 1.0
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: Guida-per-redigere-documenti-accessibili.pdf
+page: 1
+chunkIndex: 4
+chars: 240
+
+Documento PDF: Guida-per-redigere-documenti-accessibili.pdf
+
+Pagina: 1
+
+
+
+rtimento delle Finanze Ministero dell’Economia e delle Finanze, Sogéi
+GUIDA PER REDIGERE DOCUMENTI DI TESTO ACCESSIBILI
+DA TRASFORMARE IN PDF ACCESSIBILI
+VERSIONE 1.0
+
+--- end chunk ---

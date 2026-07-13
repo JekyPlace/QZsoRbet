@@ -2,7 +2,7 @@ import type { DocumentContext } from "../types/api.types.js";
 import type { UserIntent } from "./prompt.brain.js";
 
 const MIN_DOCUMENT_RELEVANCE_SCORE = Number(
-  process.env.MIN_DOCUMENT_RELEVANCE_SCORE ?? 0.45,
+  process.env.MIN_DOCUMENT_RELEVANCE_SCORE ?? 0.35,
 );
 
 export function buildRetrievalQuery(

@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { createHash } from "node:crypto";
-import { readdir, readFile, stat } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { basename, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractText, getDocumentProxy } from "unpdf";
@@ -13,9 +13,14 @@ const SOURCE_DIR = resolve(
 );
 const QDRANT_URL = process.env.QDRANT_URL ?? "http://localhost:6333";
 const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION ?? "csv_documents";
-const CHUNK_SIZE = Number(process.env.PDF_CHUNK_SIZE ?? 500);
-const CHUNK_OVERLAP = Number(process.env.PDF_CHUNK_OVERLAP ?? 75);
+const CHUNK_SIZE = Number(process.env.PDF_CHUNK_SIZE ?? 1200);
+const CHUNK_OVERLAP = Number(process.env.PDF_CHUNK_OVERLAP ?? 200);
 const EMBEDDING_BATCH_SIZE = Number(process.env.EMBEDDING_BATCH_SIZE ?? 16);
+const DEBUG_INDEX_CHUNKS = process.env.DEBUG_INDEX_CHUNKS === "true";
+const DEBUG_INDEX_CHUNK_LIMIT = Number(process.env.DEBUG_INDEX_CHUNK_LIMIT ?? 5);
+const DEBUG_INDEX_CHARS = Number(process.env.DEBUG_INDEX_CHARS ?? 1600);
+const DEBUG_INDEX_OUTPUT_DIR =
+  process.env.DEBUG_INDEX_OUTPUT_DIR ?? "/app/uploads/debug";
 
 type PdfChunk = {
   id: string;
@@ -24,6 +29,7 @@ type PdfChunk = {
     source: string;
     fileName: string;
     chunkIndex: number;
+    page: number;
     type: "pdf";
   };
 };
@@ -62,7 +68,11 @@ function deterministicUuid(value: string): string {
 }
 
 function normalizeText(text: string): string {
-  return text.replace(/\s+/g, " ").trim();
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function splitText(text: string): string[] {
@@ -70,33 +80,111 @@ function splitText(text: string): string[] {
   let start = 0;
 
   while (start < text.length) {
-    const chunk = text.slice(start, start + CHUNK_SIZE).trim();
+    let end = Math.min(start + CHUNK_SIZE, text.length);
+
+    if (end < text.length) {
+      const slice = text.slice(start, end);
+      const paragraphBreak = slice.lastIndexOf("\n\n");
+      const sentenceBreak = Math.max(
+        slice.lastIndexOf(". "),
+        slice.lastIndexOf("? "),
+        slice.lastIndexOf("! "),
+      );
+      const breakPoint = paragraphBreak > CHUNK_SIZE * 0.55
+        ? paragraphBreak
+        : sentenceBreak;
+
+      if (breakPoint > CHUNK_SIZE * 0.55) {
+        end = start + breakPoint + 1;
+      }
+    }
+
+    const chunk = text.slice(start, end).trim();
     if (chunk) chunks.push(chunk);
-    start += CHUNK_SIZE - CHUNK_OVERLAP;
+    start = Math.max(end - CHUNK_OVERLAP, start + 1);
   }
 
   return chunks;
 }
 
-export async function parsePdf(fileContent: Buffer): Promise<string> {
+export async function parsePdf(fileContent: Buffer): Promise<string[]> {
   const pdf = await getDocumentProxy(new Uint8Array(fileContent));
-  const { text } = await extractText(pdf, { mergePages: true });
-  return normalizeText(text);
+  const { text } = await extractText(pdf);
+  return text.map(normalizeText).filter(Boolean);
 }
 
-function createChunks(filePath: string, text: string): PdfChunk[] {
+function createChunks(filePath: string, pages: string[]): PdfChunk[] {
   const source = relative(SOURCE_DIR, filePath);
 
-  return splitText(text).map((chunk, chunkIndex) => ({
-    id: deterministicUuid(`${source}:${chunkIndex}`),
-    text: [`Source PDF: ${source}`, "", chunk].join("\n\n"),
-    payload: {
-      source,
-      fileName: basename(filePath),
-      chunkIndex,
-      type: "pdf",
-    },
-  }));
+  return pages.flatMap((pageText, pageIndex) =>
+    splitText(pageText).map((chunk, chunkIndex) => {
+      const globalChunkIndex = pageIndex * 1000 + chunkIndex;
+
+      return {
+        id: deterministicUuid(`${source}:${globalChunkIndex}`),
+        text: [
+          `Documento PDF: ${source}`,
+          `Pagina: ${pageIndex + 1}`,
+          "",
+          chunk,
+        ].join("\n\n"),
+        payload: {
+          source,
+          fileName: basename(filePath),
+          chunkIndex: globalChunkIndex,
+          page: pageIndex + 1,
+          type: "pdf",
+        },
+      };
+    }),
+  );
+}
+
+function cleanDebugFileName(fileName: string) {
+  return fileName.replace(/[^\w.-]/g, "_");
+}
+
+async function debugChunksBeforeEmbedding(chunks: PdfChunk[]) {
+  if (!DEBUG_INDEX_CHUNKS) return;
+
+  const chunksToShow = chunks.slice(0, DEBUG_INDEX_CHUNK_LIMIT);
+  const debugText = [
+    `[debug] PDF chunks before embedding: showing ${chunksToShow.length}/${chunks.length}`,
+    ...chunksToShow.map((chunk) =>
+      [
+        "",
+        "--- chunk before embedding ---",
+        `source: ${chunk.payload.source}`,
+        `page: ${chunk.payload.page}`,
+        `chunkIndex: ${chunk.payload.chunkIndex}`,
+        `chars: ${chunk.text.length}`,
+        "",
+        chunk.text.slice(0, DEBUG_INDEX_CHARS),
+        chunk.text.length > DEBUG_INDEX_CHARS ? "\n...[truncated]" : "",
+        "--- end chunk ---",
+      ].join("\n"),
+    ),
+  ].join("\n");
+
+  console.info(`\n${debugText}`);
+
+  try {
+    await mkdir(DEBUG_INDEX_OUTPUT_DIR, { recursive: true });
+
+    const source = chunks[0]?.payload.source ?? "pdf";
+    const debugFilePath = resolve(
+      DEBUG_INDEX_OUTPUT_DIR,
+      `${Date.now()}-${cleanDebugFileName(basename(source))}.txt`,
+    );
+
+    await writeFile(debugFilePath, debugText, "utf8");
+    console.info(`[debug] PDF chunks written to ${debugFilePath}`);
+  } catch (error) {
+    console.warn(
+      "[debug] Unable to write PDF chunks debug file:",
+      error instanceof Error ? error.message : error,
+    );
+  }
 }
 
 async function ensureCollection(vectorSize: number): Promise<void> {
@@ -156,6 +244,8 @@ async function deleteSourcePoints(source: string): Promise<void> {
 
 async function upsertChunks(chunks: PdfChunk[]): Promise<void> {
   let sourceDeleted = false;
+
+  await debugChunksBeforeEmbedding(chunks);
 
   for (let index = 0; index < chunks.length; index += EMBEDDING_BATCH_SIZE) {
     const batch = chunks.slice(index, index + EMBEDDING_BATCH_SIZE);
@@ -224,16 +314,16 @@ export async function getPdfContent(): Promise<PdfChunk[]> {
   const chunks: PdfChunk[] = [];
 
   for (const filePath of files) {
-    const text = await parsePdf(await readFile(filePath));
-    chunks.push(...createChunks(filePath, text));
+    const pages = await parsePdf(await readFile(filePath));
+    chunks.push(...createChunks(filePath, pages));
   }
 
   return chunks;
 }
 
 export async function indexPdfFile(filePath: string) {
-  const text = await parsePdf(await readFile(filePath));
-  const chunks = createChunks(filePath, text);
+  const pages = await parsePdf(await readFile(filePath));
+  const chunks = createChunks(filePath, pages);
 
   if (chunks.length === 0) {
     return {

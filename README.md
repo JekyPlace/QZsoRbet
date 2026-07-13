@@ -570,6 +570,31 @@ Se hai un file `qzr-ai-tanstack/.env`, verifica:
 VITE_API_BASE_URL=http://localhost:8555
 ```
 
+### Vedere cosa viene mandato agli embeddings PDF
+
+Per controllare il testo estratto dal PDF prima della creazione degli embeddings, abilita:
+
+```env
+DEBUG_INDEX_CHUNKS=true
+DEBUG_INDEX_CHUNK_LIMIT=5
+DEBUG_INDEX_CHARS=1600
+DEBUG_INDEX_OUTPUT_DIR=/app/uploads/debug
+```
+
+Poi reindicizza i PDF:
+
+```bash
+npm run index:pdf
+```
+
+Il backend stampera in console i primi chunk che vengono inviati al modello embeddings.
+
+Se usi Docker, viene scritto anche un file `.txt` leggibile dalla macchina host in:
+
+```txt
+data/uploads/debug
+```
+
 ### Warning `standardFontDataUrl` durante `index:pdf`
 
 Durante l'estrazione PDF potresti vedere:

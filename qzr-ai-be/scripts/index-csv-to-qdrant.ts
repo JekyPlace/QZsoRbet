@@ -2,6 +2,7 @@ import "dotenv/config";
 import { createHash } from "node:crypto";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { basename, relative, resolve } from "node:path";
+import Papa from "papaparse";
 import { createEmbeddings } from "../src/services/embedding.api.js";
 
 const SOURCE_DIR = resolve(
@@ -42,61 +43,16 @@ async function findCsvFiles(directory: string): Promise<string[]> {
   return files.flat();
 }
 
-function detectDelimiter(text: string): string {
-  const firstLine = text.split(/\r?\n/, 1)[0] ?? "";
-  const candidates = [",", ";", "\t"];
+function parseCsvRows(text: string): string[][] {
+  const result = Papa.parse<string[]>(text, {
+    skipEmptyLines: true,
+  });
 
-  return candidates.reduce((best, candidate) => {
-    const matches = firstLine.split(candidate).length;
-    return matches > firstLine.split(best).length ? candidate : best;
-  }, ",");
-}
-
-function parseCsv(text: string, delimiter: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let quoted = false;
-
-  for (let index = 0; index < text.length; index += 1) {
-    const character = text[index];
-    const nextCharacter = text[index + 1];
-
-    if (character === '"') {
-      if (quoted && nextCharacter === '"') {
-        field += '"';
-        index += 1;
-      } else {
-        quoted = !quoted;
-      }
-      continue;
-    }
-    /**/
-
-    if (character === delimiter && !quoted) {
-      row.push(field.trim());
-      field = "";
-      continue;
-    }
-
-    if ((character === "\n" || character === "\r") && !quoted) {
-      if (character === "\r" && nextCharacter === "\n") index += 1;
-      row.push(field.trim());
-
-      if (row.some(Boolean)) rows.push(row);
-
-      row = [];
-      field = "";
-      continue;
-    }
-
-    field += character;
+  if (result.errors.length > 0) {
+    throw new Error(`CSV parse error: ${result.errors[0]?.message}`);
   }
 
-  row.push(field.trim());
-  if (row.some(Boolean)) rows.push(row);
-
-  return rows;
+  return result.data.map((row) => row.map((cell) => cell.trim()));
 }
 
 function formatRow(headers: string[], row: string[]): string {
@@ -258,7 +214,7 @@ async function upsertChunks(chunks: CsvChunk[]): Promise<void> {
 
 export async function indexCsvFile(filePath: string) {
   const text = await readFile(filePath, "utf8");
-  const rows = parseCsv(text, detectDelimiter(text));
+  const rows = parseCsvRows(text);
   const chunks = createChunks(filePath, rows);
 
   if (chunks.length === 0) {
