@@ -4,6 +4,7 @@ import {
   tryParseQueryRewrite,
   type QueryRewriteResult,
 } from "../lib/queryRewrite.brain.js";
+import type { ConversationMemory } from "../lib/conversationMemory.brain.js";
 import { generateMessageFromAI } from "./ai.api.js";
 
 const DEBUG_QUERY_REWRITE = process.env.DEBUG_QUERY_REWRITE === "true";
@@ -25,6 +26,7 @@ type RewriteConversationMessage = {
 };
 
 type RewriteRetrievalQueryParams = {
+  conversationMemory?: ConversationMemory;
   currentRequest: string;
   recentMessages: RewriteConversationMessage[];
   selectedModel: string;
@@ -45,6 +47,7 @@ function logQueryRewrite(data: QueryRewriteLog) {
 }
 
 export async function rewriteRetrievalQuery({
+  conversationMemory,
   currentRequest,
   recentMessages,
   selectedModel,
@@ -57,6 +60,7 @@ export async function rewriteRetrievalQuery({
   try {
     const output = await generateMessageFromAI(
       buildQueryRewriteMessages({
+        conversationMemory,
         currentRequest,
         recentMessages: recentMessages.slice(-QUERY_REWRITE_RECENT_MESSAGES),
       }),

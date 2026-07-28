@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Identity, Prisma } from "../../generated/prisma/client.js";
+import { buildConversationMemorySystemMessage } from "../lib/conversationMemory.brain.js";
 import {
   buildDocumentSystemMessage,
   classifyUserIntent,
@@ -19,6 +20,7 @@ import {
   writeSse,
 } from "../lib/sse.brain.js";
 import { getOllamaModels, streamMessageFromAI } from "../services/ai.api.js";
+import { refreshConversationMemory } from "../services/conversationMemory.api.js";
 import { getRelevantCsvContext } from "../services/qdrant.api.js";
 import { rewriteRetrievalQuery } from "../services/queryRewrite.api.js";
 import type { AIMessage, MessageBody } from "../types/api.types.js";
@@ -140,24 +142,49 @@ chatRouter.post("/message", async (request, response) => {
       return;
     }
 
-    const previousMessages = chatId
+    const existingChat = chatId
+      ? await prisma.chat.findUnique({
+          where: { id: chatId },
+          select: {
+            conversationMemory: true,
+            memoryMessageCount: true,
+          },
+        })
+      : null;
+
+    if (chatId && !existingChat) {
+      writeSse(response, "error", { error: "Chat not found" });
+      response.end();
+      return;
+    }
+
+    const unsummarizedMessages = chatId
       ? await prisma.message.findMany({
           where: { chatId },
-          orderBy: { timestamp: "desc" },
-          take: 20,
+          orderBy: { timestamp: "asc" },
+          skip: existingChat?.memoryMessageCount ?? 0,
           select: { from: true, content: true },
         })
       : [];
-    const chronologicalMessages = [...previousMessages].reverse();
+    const chronologicalMessages = unsummarizedMessages.map((message) => ({
+      content: message.content,
+      role:
+        message.from === Identity.HUMAN
+          ? ("user" as const)
+          : ("assistant" as const),
+    }));
+    const conversationContext = await refreshConversationMemory({
+      chatId,
+      memoryMessageCount: existingChat?.memoryMessageCount,
+      messages: chronologicalMessages,
+      selectedModel,
+      signal: abortController.signal,
+      storedMemory: existingChat?.conversationMemory,
+    });
     const rewrittenQuery = await rewriteRetrievalQuery({
+      conversationMemory: conversationContext.memory,
       currentRequest: userContent,
-      recentMessages: chronologicalMessages.map((message) => ({
-        content: message.content,
-        role:
-          message.from === Identity.HUMAN
-            ? ("user" as const)
-            : ("assistant" as const),
-      })),
+      recentMessages: conversationContext.recentMessages,
       selectedModel,
       signal: abortController.signal,
     });
@@ -218,14 +245,9 @@ chatRouter.post("/message", async (request, response) => {
 
     const contextMessages: AIMessage[] = [
       MODEL_SYSTEM_MESSAGE,
+      ...buildConversationMemorySystemMessage(conversationContext.memory),
       ...documentSystemMessage,
-      ...chronologicalMessages.map((message) => ({
-        role:
-          message.from === Identity.HUMAN
-            ? ("user" as const)
-            : ("assistant" as const),
-        content: message.content,
-      })),
+      ...conversationContext.recentMessages,
       {
         role: "user",
         content: userContent,

@@ -68,6 +68,7 @@ Il comando `npm run setup` installa le dipendenze, crea gli env mancanti, avvia 
 - genera embeddings con Ollama
 - salva gli embeddings in Qdrant
 - recupera i contenuti piu rilevanti rispetto alla domanda
+- mantiene una memoria conversazionale sintetica e strutturata delle chat lunghe
 - usa il contesto recuperato per generare una risposta
 - legge i modelli installati in Ollama e li rende selezionabili dalla UI
 - salva chat e messaggi in Postgres

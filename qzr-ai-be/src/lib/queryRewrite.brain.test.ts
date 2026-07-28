@@ -56,6 +56,14 @@ test("falls back to the original query for invalid output", () => {
 
 test("builds a structured rewriting request with recent conversation", () => {
   const messages = buildQueryRewriteMessages({
+    conversationMemory: {
+      activeTopic: "Team di QZR",
+      entities: ["QZR"],
+      summary: "L'utente sta confrontando i reparti di QZR.",
+      unresolvedReferences: [],
+      userConstraints: [],
+      version: 1,
+    },
     currentRequest: "E per il design?",
     recentMessages: [
       {
@@ -73,10 +81,12 @@ test("builds a structured rewriting request with recent conversation", () => {
   assert.equal(messages[1]?.role, "user");
 
   const input = JSON.parse(messages[1]?.content ?? "{}") as {
+    conversationMemory?: { activeTopic?: string };
     currentRequest?: string;
     recentMessages?: unknown[];
   };
 
+  assert.equal(input.conversationMemory?.activeTopic, "Team di QZR");
   assert.equal(input.currentRequest, "E per il design?");
   assert.equal(input.recentMessages?.length, 2);
 });

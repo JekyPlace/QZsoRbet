@@ -13,10 +13,12 @@ datasource db {
 }
 
 model Chat {
-  id               String    @id @default(uuid())
-  label            String
-  messages         Message[]
-  lastModification DateTime  @updatedAt @map("last_modification")
+  id                     String    @id @default(uuid())
+  label                  String
+  messages               Message[]
+  conversationMemory     Json?     @map("conversation_memory")
+  memoryMessageCount     Int       @default(0) @map("memory_message_count")
+  lastModification       DateTime  @updatedAt @map("last_modification")
 
   @@map("chats")
 }

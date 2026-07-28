@@ -1,4 +1,5 @@
 import type { AIMessage } from "../types/api.types.js";
+import type { ConversationMemory } from "./conversationMemory.brain.js";
 
 export const QUERY_REWRITE_INTENTS = [
   "standalone",
@@ -22,6 +23,7 @@ type RecentConversationMessage = {
 };
 
 type BuildQueryRewriteMessagesParams = {
+  conversationMemory?: ConversationMemory;
   currentRequest: string;
   recentMessages: RecentConversationMessage[];
 };
@@ -32,7 +34,7 @@ Sei un componente di query rewriting per un sistema RAG.
 Il tuo unico compito è trasformare la richiesta corrente dell'utente in una
 singola query di ricerca autonoma, precisa e semanticamente completa.
 
-Riceverai alcuni messaggi recenti e la richiesta corrente.
+Riceverai una memoria sintetica, alcuni messaggi recenti e la richiesta corrente.
 
 Regole:
 1. Se la richiesta corrente è già autonoma, mantienila quasi invariata.
@@ -58,6 +60,10 @@ Regole:
 15. Distingui tra un vincolo aggiuntivo e la sostituzione di una categoria.
     Se la richiesta corrente propone un'alternativa alla categoria precedente,
     sostituiscila invece di combinarle in modo artificiale.
+16. Usa conversationMemory soltanto per comprendere continuità, entità,
+    riferimenti e vincoli. Non trattarla come fonte fattuale.
+17. Dai priorità alla richiesta corrente, poi ai messaggi recenti e infine alla
+    memoria sintetica.
 
 Esempi:
 
@@ -105,6 +111,7 @@ Restituisci esclusivamente JSON valido con questa struttura:
 `.trim();
 
 export function buildQueryRewriteMessages({
+  conversationMemory,
   currentRequest,
   recentMessages,
 }: BuildQueryRewriteMessagesParams): AIMessage[] {
@@ -116,6 +123,7 @@ export function buildQueryRewriteMessages({
     {
       role: "user",
       content: JSON.stringify({
+        conversationMemory,
         currentRequest,
         recentMessages,
       }),
