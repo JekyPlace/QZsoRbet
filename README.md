@@ -143,6 +143,27 @@ Con 8 GB di RAM l'app puo partire, ma `gemma3:12b` puo essere lento o pesante. I
 
 L'app supporta sia `.csv` che `.pdf`.
 
+### Retrieval adaptive
+
+Il retrieval recupera fino a 12 candidati da Qdrant con una soglia iniziale
+bassa (`QDRANT_SCORE_THRESHOLD=0.2`). Il backend applica poi un filtro
+adaptive: il risultato migliore deve superare `MIN_TOP_DOCUMENT_SCORE` e gli
+altri chunk devono rimanere sopra una percentuale del suo score.
+
+Parametri configurabili nel `.env` del backend:
+
+```env
+QDRANT_SEARCH_LIMIT=12
+QDRANT_SCORE_THRESHOLD=0.2
+MIN_TOP_DOCUMENT_SCORE=0.42
+MIN_DOCUMENT_SCORE=0.25
+MIN_RELATIVE_SCORE_RATIO=0.82
+MAX_CONTEXT_DOCUMENTS=8
+```
+
+I valori iniziali sono euristici e vanno calibrati usando domande reali e
+verificando quanti risultati corretti entrano nel contesto.
+
 Ci sono due modi per fornire documenti.
 
 ### Upload dall'app

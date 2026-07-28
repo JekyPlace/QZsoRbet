@@ -24,6 +24,14 @@ type OllamaChatResponse = {
   error?: string;
 };
 
+type GenerateMessageOptions = {
+  format?: "json";
+  maxOutputTokens?: number;
+  temperature?: number;
+  think?: boolean;
+  timeoutMs?: number;
+};
+
 export async function getOllamaModels(): Promise<OllamaModel[]> {
   const response = await fetch(`${OLLAMA_URL}/api/tags`);
 
@@ -107,6 +115,58 @@ export async function* streamMessageFromAI(
   assertNotTruncated(finalChunk);
 }
 
+export async function generateMessageFromAI(
+  messages: AIMessage[],
+  model: string,
+  {
+    format,
+    maxOutputTokens = 512,
+    temperature = 0,
+    think = false,
+    timeoutMs = 15_000,
+  }: GenerateMessageOptions = {},
+  signal?: AbortSignal,
+) {
+  const timeoutSignal = AbortSignal.timeout(timeoutMs);
+  const requestSignal = signal
+    ? AbortSignal.any([signal, timeoutSignal])
+    : timeoutSignal;
+  const response = await fetch(`${OLLAMA_URL}/api/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    signal: requestSignal,
+    body: JSON.stringify({
+      format,
+      messages,
+      model,
+      options: {
+        num_ctx: Math.min(OLLAMA_CONTEXT_SIZE, 4096),
+        num_predict: maxOutputTokens,
+        temperature,
+      },
+      stream: false,
+      think,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to send message to AI: ${await response.text()}`);
+  }
+
+  const data = (await response.json()) as OllamaChatResponse;
+  assertNotTruncated(data, maxOutputTokens);
+
+  const content = data.message?.content?.trim();
+
+  if (!content) {
+    throw new Error("Ollama returned an empty message");
+  }
+
+  return content;
+}
+
 function parseOllamaChunk(line: string): OllamaChatResponse {
   if (!line.trim()) return {};
 
@@ -119,10 +179,13 @@ function parseOllamaChunk(line: string): OllamaChatResponse {
   return data;
 }
 
-function assertNotTruncated(data: OllamaChatResponse) {
+function assertNotTruncated(
+  data: OllamaChatResponse,
+  maxOutputTokens = OLLAMA_MAX_OUTPUT_TOKENS,
+) {
   if (data.done && data.done_reason === "length") {
     throw new Error(
-      `La risposta ha raggiunto il limite di ${OLLAMA_MAX_OUTPUT_TOKENS} token`,
+      `La risposta ha raggiunto il limite di ${maxOutputTokens} token`,
     );
   }
 }

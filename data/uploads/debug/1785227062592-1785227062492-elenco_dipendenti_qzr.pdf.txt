@@ -1,0 +1,103 @@
+[debug] PDF chunks before embedding: showing 5/202
+
+--- chunk before embedding ---
+source: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+page: 1
+chunkIndex: 0
+chars: 1280
+
+Documento PDF: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+
+Pagina: 1
+
+
+
+QZR Studio - Uso interno Pagina 1
+Elenco dipendenti
+Organico QZR Studio - aggiornamento del 28 luglio 2026
+BOZZA - DATI FITTIZI
+12 PERSONE 6 AREE 2 SEDI 100% ATTIVI
+ID NOME E COGNOME RUOLO AREA SEDE INGRESSO STATO
+QZR-001 Giulia Ferri CEO Direzione Milano 12/01/2021 Attivo
+QZR-002 Luca Romano CTO Tecnologia Milano 08/03/2021 Attivo
+QZR-003 Elena Conti Creative Director Design Milano 17/05/2021 Attivo
+QZR-004 Marco Riva Senior Developer Tecnologia Milano 11/10/2021 Attivo
+QZR-005 Sara Galli Product Designer Design Roma 14/02/2022 Attivo
+QZR-006 Davide Serra AI Engineer AI & Data Milano 06/06/2022 Attivo
+QZR-007 Marta Villa Project Manager Operations Roma 19/09/2022 Attivo
+QZR-008 Andrea Moretti Frontend Developer Tecnologia Milano 09/01/2023 Attivo
+QZR-009 Chiara Lombardi Data Analyst AI & Data Roma 03/04/2023 Attivo
+QZR-010 Paolo Greco Account Manager Business Milano 18/09/2023 Attivo
+QZR-011 Federica Neri UX Researcher Design Roma 15/01/2024 Attivo
+QZR-012 Matteo Costa Backend Developer Tecnologia Milano 22/04/2024 Attivo
+Nota: nominativi, ruoli e date presenti in questo documento sono esclusivamente dimostrativi e devono essere sostituiti con dati autorizzati prima dell'uso opera
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+page: 1
+chunkIndex: 1
+chars: 285
+
+Documento PDF: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+
+Pagina: 1
+
+
+
+er Tecnologia Milano 22/04/2024 Attivo
+Nota: nominativi, ruoli e date presenti in questo documento sono esclusivamente dimostrativi e devono essere sostituiti con dati autorizzati prima dell'uso operativo.
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+page: 1
+chunkIndex: 2
+chars: 280
+
+Documento PDF: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+
+Pagina: 1
+
+
+
+cnologia Milano 22/04/2024 Attivo
+Nota: nominativi, ruoli e date presenti in questo documento sono esclusivamente dimostrativi e devono essere sostituiti con dati autorizzati prima dell'uso operativo.
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+page: 1
+chunkIndex: 3
+chars: 279
+
+Documento PDF: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+
+Pagina: 1
+
+
+
+nologia Milano 22/04/2024 Attivo
+Nota: nominativi, ruoli e date presenti in questo documento sono esclusivamente dimostrativi e devono essere sostituiti con dati autorizzati prima dell'uso operativo.
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+page: 1
+chunkIndex: 4
+chars: 278
+
+Documento PDF: ../uploads/1785227062492-elenco_dipendenti_qzr.pdf
+
+Pagina: 1
+
+
+
+ologia Milano 22/04/2024 Attivo
+Nota: nominativi, ruoli e date presenti in questo documento sono esclusivamente dimostrativi e devono essere sostituiti con dati autorizzati prima dell'uso operativo.
+
+--- end chunk ---

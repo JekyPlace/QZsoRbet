@@ -1,5 +1,6 @@
 import Sidebar from "#/features/Sidebar";
 import ContextDropzone from "./ContextDropzone";
+import ContextDeleteFileDialog from "./ContextDeleteFileDialog";
 import ContextFileList from "./ContextFileList";
 import { useContextPage } from "./contextPage.brain";
 
@@ -24,6 +25,15 @@ export default function ContextPage() {
           <ContextFileList {...contextPage} />
         </section>
       </main>
+      {contextPage.fileToDelete && (
+        <ContextDeleteFileDialog
+          file={contextPage.fileToDelete}
+          deleteError={contextPage.deleteError}
+          isDeleting={contextPage.deletingStoredName !== null}
+          onCancel={contextPage.closeDeleteDialog}
+          onConfirm={contextPage.confirmDelete}
+        />
+      )}
     </div>
   );
 }

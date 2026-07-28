@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
-import { readdir, stat } from "node:fs/promises";
-import { extname, resolve } from "node:path";
+import { readdir, stat, unlink } from "node:fs/promises";
+import { extname, resolve, sep } from "node:path";
 import { Router } from "express";
 import multer from "multer";
 import { indexCsvFile } from "../../scripts/index-csv-to-qdrant.js";
@@ -10,6 +10,8 @@ const contextRouter = Router();
 const defaultUploadDir =
   process.cwd() === "/app" ? "/app/uploads" : "../data/uploads";
 const uploadDir = resolve(process.env.UPLOAD_SOURCE_DIR ?? defaultUploadDir);
+const qdrantUrl = process.env.QDRANT_URL ?? "http://localhost:6333";
+const qdrantCollection = process.env.QDRANT_COLLECTION ?? "csv_documents";
 
 mkdirSync(uploadDir, { recursive: true });
 
@@ -82,6 +84,68 @@ contextRouter.get("/files", async (_request, response) => {
         error instanceof Error
           ? error.message
           : "Impossibile leggere i file caricati",
+    });
+  }
+});
+
+contextRouter.delete("/files/:storedName", async (request, response) => {
+  const storedName = request.params.storedName;
+
+  if (!storedName || cleanFileName(storedName) !== storedName) {
+    response.status(400).json({ error: "Nome file non valido" });
+    return;
+  }
+
+  const filePath = resolve(uploadDir, storedName);
+
+  if (filePath !== uploadDir && !filePath.startsWith(`${uploadDir}${sep}`)) {
+    response.status(400).json({ error: "Percorso file non valido" });
+    return;
+  }
+
+  try {
+    const fileStat = await stat(filePath).catch(() => null);
+
+    if (!fileStat?.isFile()) {
+      response.status(404).json({ error: "Documento non trovato" });
+      return;
+    }
+
+    const collectionResponse = await fetch(
+      `${qdrantUrl}/collections/${qdrantCollection}`,
+    );
+
+    if (!collectionResponse.ok && collectionResponse.status !== 404) {
+      throw new Error(`Qdrant error: ${await collectionResponse.text()}`);
+    }
+
+    if (collectionResponse.ok) {
+      const deletePointsResponse = await fetch(
+        `${qdrantUrl}/collections/${qdrantCollection}/points/delete?wait=true`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filter: {
+              must: [{ key: "fileName", match: { value: storedName } }],
+            },
+          }),
+        },
+      );
+
+      if (!deletePointsResponse.ok) {
+        throw new Error(`Qdrant delete error: ${await deletePointsResponse.text()}`);
+      }
+    }
+
+    await unlink(filePath);
+    response.status(204).send();
+  } catch (error) {
+    response.status(500).json({
+      error:
+        error instanceof Error
+          ? error.message
+          : "Impossibile eliminare il documento",
     });
   }
 });

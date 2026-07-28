@@ -9,9 +9,9 @@ import {
 } from "../lib/prompt.brain.js";
 import { prisma } from "../lib/prisma.js";
 import {
-  buildRetrievalQuery,
-  hasRelevantDocumentContext,
   logRagDecision,
+  logRagPrompt,
+  selectRelevantDocumentContext,
 } from "../lib/rag.brain.js";
 import {
   prepareSseResponse,
@@ -20,6 +20,7 @@ import {
 } from "../lib/sse.brain.js";
 import { getOllamaModels, streamMessageFromAI } from "../services/ai.api.js";
 import { getRelevantCsvContext } from "../services/qdrant.api.js";
+import { rewriteRetrievalQuery } from "../services/queryRewrite.api.js";
 import type { AIMessage, MessageBody } from "../types/api.types.js";
 
 const chatRouter = Router();
@@ -147,19 +148,31 @@ chatRouter.post("/message", async (request, response) => {
           select: { from: true, content: true },
         })
       : [];
-    const recentUserContext = previousMessages
-      .filter((message) => message.from === Identity.HUMAN)
-      .slice(0, 3)
-      .reverse()
-      .map((message) => message.content);
-    const retrievalQuery = buildRetrievalQuery(recentUserContext, userContent);
-    const documentContext = await getRelevantCsvContext(retrievalQuery);
+    const chronologicalMessages = [...previousMessages].reverse();
+    const rewrittenQuery = await rewriteRetrievalQuery({
+      currentRequest: userContent,
+      recentMessages: chronologicalMessages.map((message) => ({
+        content: message.content,
+        role:
+          message.from === Identity.HUMAN
+            ? ("user" as const)
+            : ("assistant" as const),
+      })),
+      selectedModel,
+      signal: abortController.signal,
+    });
+    const retrievalQuery = rewrittenQuery.query;
+    const retrievedDocumentContext = await getRelevantCsvContext(retrievalQuery);
+    const documentContext = selectRelevantDocumentContext(
+      retrievedDocumentContext,
+    );
     const isMissingDocumentContext =
-      userIntent !== "identity" && !hasRelevantDocumentContext(documentContext);
+      userIntent !== "identity" && documentContext.length === 0;
 
     logRagDecision({
       documentContext,
       isMissingDocumentContext,
+      retrievedDocumentContext,
       retrievalQuery,
       userIntent,
     });
@@ -206,7 +219,7 @@ chatRouter.post("/message", async (request, response) => {
     const contextMessages: AIMessage[] = [
       MODEL_SYSTEM_MESSAGE,
       ...documentSystemMessage,
-      ...previousMessages.reverse().map((message) => ({
+      ...chronologicalMessages.map((message) => ({
         role:
           message.from === Identity.HUMAN
             ? ("user" as const)
@@ -218,6 +231,8 @@ chatRouter.post("/message", async (request, response) => {
         content: userContent,
       },
     ];
+
+    logRagPrompt(contextMessages);
 
     for await (const chunk of streamMessageFromAI(
       contextMessages,

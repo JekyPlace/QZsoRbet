@@ -16,7 +16,7 @@
     "index:all": "npm run index:csv && npm run index:pdf",
     "setup:docker": "npm run db:generate && npm run db:migrate && npm run index:all",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsx --test src/lib/*.test.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

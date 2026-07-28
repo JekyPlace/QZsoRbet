@@ -203,3 +203,29 @@ export async function uploadContextFile(
 
   return data as ContextUploadResponse;
 }
+
+export async function deleteContextFile(storedName: string): Promise<void> {
+  if (!storedName.trim()) {
+    throw new Error("Documento inesistente");
+  }
+
+  const deleteUrl = apiUrl(`/context/files/${encodeURIComponent(storedName)}`);
+  const response = await fetch(deleteUrl, { method: "DELETE" });
+
+  if (!response.ok) {
+    const responseText = await response.text();
+    let errorMessage: string | null = null;
+
+    try {
+      const data = JSON.parse(responseText) as { error?: unknown };
+      errorMessage = typeof data.error === "string" ? data.error : null;
+    } catch {
+      // The backend may return a non-JSON error response.
+    }
+
+    throw new Error(
+      errorMessage ??
+        `Errore HTTP ${response.status}: ${response.statusText} (${deleteUrl})`,
+    );
+  }
+}

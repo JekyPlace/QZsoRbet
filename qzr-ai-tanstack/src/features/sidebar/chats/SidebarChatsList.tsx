@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { MessageSquare, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { MessageSquare, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import SidebarChatControls from "../composition/SidebarChatControls";
 import {
   useSidebarChatItem,
   useSidebarChatsList,
@@ -19,28 +20,35 @@ export default function SidebarChatsList(props: SidebarChatsListProps) {
     filteredChats,
     hasChats,
     hasFilteredChats,
+    isSearchOpen,
     searchQuery,
     setSearchQuery,
     shouldShowEmptyState,
     shouldShowError,
     shouldShowNoResults,
     shouldShowSearch,
+    toggleSearch,
   } = useSidebarChatsList(props);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (shouldShowSearch) searchInputRef.current?.focus();
+  }, [shouldShowSearch]);
 
   return (
     <div className="scrollbar-hidden min-h-0 flex-1 overflow-y-auto">
-      {shouldShowSearch && (
-        <label className="mb-3 flex  items-center gap-1.5 rounded-full border border-black/20 bg-[#fff27a]/60 px-2.5 text-black focus-within:ring-2 ">
-          <Search size={14} className="shrink-0 opacity-45" />
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Cerca chat"
-            className="min-w-0 flex-1 border-0 bg-transparent py-1.5 text-xs outline-none placeholder:text-black/40"
-          />
-        </label>
-      )}
+      <div className="mb-3">
+        <SidebarChatControls
+          expanded={props.expanded}
+          isSearchOpen={isSearchOpen}
+          onNavigate={props.onNavigate}
+          onSearchChange={setSearchQuery}
+          onSearchToggle={toggleSearch}
+          searchDisabled={!hasChats}
+          searchInputRef={searchInputRef}
+          searchQuery={searchQuery}
+        />
+      </div>
 
       {shouldShowError && (
         <p className="m-0 rounded-lg border border-black/20 bg-[#fff27a]/70 p-3 text-sm">

@@ -1,9 +1,20 @@
 import type { DragEvent } from "react";
 import { useEffect, useState } from "react";
-import { getContextFiles, uploadContextFile } from "#/services/network";
+import {
+  deleteContextFile,
+  getContextFiles,
+  uploadContextFile,
+} from "#/services/network";
 import type { ContextFile, ContextUploadResponse } from "#/types/api.types";
 
 const ACCEPTED_EXTENSIONS = [".csv", ".pdf"] as const;
+
+type UploadProgress = {
+  completed: number;
+  current: number;
+  fileName: string;
+  total: number;
+};
 
 function isAcceptedFile(file: File) {
   const fileName = file.name.toLowerCase();
@@ -18,7 +29,14 @@ export function useContextPage() {
     [],
   );
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] =
+    useState<UploadProgress | null>(null);
   const [isLoadingFiles, setIsLoadingFiles] = useState(true);
+  const [deletingStoredName, setDeletingStoredName] = useState<string | null>(
+    null,
+  );
+  const [fileToDelete, setFileToDelete] = useState<ContextFile | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function loadContextFiles() {
@@ -43,6 +61,8 @@ export function useContextPage() {
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
+    if (isUploading) return;
+
     setIsDragging(true);
   }
 
@@ -57,8 +77,11 @@ export function useContextPage() {
   async function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setIsDragging(false);
+    if (isUploading) return;
 
     const files = Array.from(event.dataTransfer.files);
+    if (files.length === 0) return;
+
     const invalidFiles = files.filter((file) => !isAcceptedFile(file));
 
     if (invalidFiles.length > 0) {
@@ -70,16 +93,27 @@ export function useContextPage() {
     setIsUploading(true);
     setUploadedFiles([]);
     setError(null);
+    const results: ContextUploadResponse[] = [];
 
     try {
-      const results: ContextUploadResponse[] = [];
+      for (const [index, file] of files.entries()) {
+        setUploadProgress({
+          completed: index,
+          current: index + 1,
+          fileName: file.name,
+          total: files.length,
+        });
 
-      for (const file of files) {
         results.push(await uploadContextFile(file));
+        setUploadedFiles([...results]);
+        setUploadProgress({
+          completed: index + 1,
+          current: index + 1,
+          fileName: file.name,
+          total: files.length,
+        });
       }
 
-      setUploadedFiles(results);
-      await loadContextFiles();
     } catch (uploadError) {
       setError(
         uploadError instanceof Error
@@ -87,19 +121,74 @@ export function useContextPage() {
           : "Upload o indicizzazione non riusciti.",
       );
     } finally {
+      if (results.length > 0) {
+        await loadContextFiles();
+      }
+
+      setUploadProgress(null);
       setIsUploading(false);
+    }
+  }
+
+  function handleDelete(storedName: string) {
+    const file = contextFiles.find((item) => item.storedName === storedName);
+    if (!file) return;
+
+    setFileToDelete(file);
+    setDeleteError(null);
+  }
+
+  function closeDeleteDialog() {
+    if (deletingStoredName) return;
+
+    setFileToDelete(null);
+    setDeleteError(null);
+  }
+
+  async function confirmDelete() {
+    if (!fileToDelete) return;
+
+    const { storedName } = fileToDelete;
+
+    setDeletingStoredName(storedName);
+    setDeleteError(null);
+
+    try {
+      await deleteContextFile(storedName);
+      setContextFiles((files) =>
+        files.filter((file) => file.storedName !== storedName),
+      );
+      setUploadedFiles((files) =>
+        files.filter((file) => file.file.storedName !== storedName),
+      );
+      setFileToDelete(null);
+    } catch (deleteError) {
+      setDeleteError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Impossibile eliminare il documento.",
+      );
+    } finally {
+      setDeletingStoredName(null);
     }
   }
 
   return {
     contextFiles,
+    closeDeleteDialog,
+    confirmDelete,
+    deleteError,
+    deletingStoredName,
     error,
     handleDragLeave,
     handleDragOver,
     handleDrop,
+    handleDelete,
     isDragging,
     isLoadingFiles,
     isUploading,
+    fileToDelete,
+    uploadProgress,
     uploadedFiles,
   };
 }

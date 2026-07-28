@@ -1,9 +1,9 @@
-import { FileText } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import type { ContextPageState } from "./contextPage.brain";
 
 type ContextFileListProps = Pick<
   ContextPageState,
-  "contextFiles" | "isLoadingFiles"
+  "contextFiles" | "deletingStoredName" | "handleDelete" | "isLoadingFiles"
 >;
 
 function formatFileSize(size: number) {
@@ -61,6 +61,23 @@ export default function ContextFileList(props: ContextFileListProps) {
                   {formatDate(file.uploadedAt)}
                 </p>
               </div>
+              <button
+                type="button"
+                aria-label={`Elimina ${file.name}`}
+                title={`Elimina ${file.name}`}
+                disabled={props.deletingStoredName !== null}
+                className="grid size-9 shrink-0 place-items-center rounded-full text-black/45 transition hover:bg-black hover:text-[#fff333] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30 disabled:cursor-not-allowed disabled:opacity-40"
+                onClick={() => props.handleDelete(file.storedName)}
+              >
+                {props.deletingStoredName === file.storedName ? (
+                  <span
+                    className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                    aria-label="Eliminazione in corso"
+                  />
+                ) : (
+                  <Trash2 size={16} />
+                )}
+              </button>
             </li>
           ))}
         </ul>
