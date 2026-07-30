@@ -2,8 +2,6 @@ import SidebarChatsList from "#/features/sidebar/chats/SidebarChatsList";
 import SidebarDeleteChatDialog from "#/features/sidebar/chats/SidebarDeleteChatDialog";
 import SidebarContent from "#/features/sidebar/composition/SidebarContent";
 import SidebarHeader from "#/features/sidebar/composition/SidebarHeader";
-import SidebarNewChatButton from "#/features/sidebar/composition/SidebarNewChatButton";
-import SidebarNewChatSection from "#/features/sidebar/composition/SidebarNewChatSection";
 import SidebarShell from "#/features/sidebar/composition/SidebarShell";
 import { useSidebar, type SidebarProps } from "./sidebar.brain";
 
@@ -42,18 +40,12 @@ function Sidebar(props: SidebarProps) {
         />
 
         <SidebarContent>
-          <SidebarNewChatSection expanded={isExpanded}>
-            <SidebarNewChatButton
-              expanded={isExpanded}
-              onNavigate={closeSidebarOnMobile}
-            />
-          </SidebarNewChatSection>
-
           <SidebarChatsList
             chats={chats}
             error={error}
             expanded={isExpanded}
             onDeleteChat={openDeleteDialog}
+            onExpand={toggleSidebar}
             onNavigate={closeSidebarOnMobile}
           />
         </SidebarContent>

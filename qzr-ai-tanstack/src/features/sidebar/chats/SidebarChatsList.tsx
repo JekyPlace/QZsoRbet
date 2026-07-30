@@ -16,35 +16,39 @@ type ChatTooltip = {
 
 export default function SidebarChatsList(props: SidebarChatsListProps) {
   const [chatTooltip, setChatTooltip] = useState<ChatTooltip | null>(null);
+  const [shouldFocusSearch, setShouldFocusSearch] = useState(false);
   const {
     filteredChats,
     hasChats,
     hasFilteredChats,
-    isSearchOpen,
     searchQuery,
     setSearchQuery,
     shouldShowEmptyState,
     shouldShowError,
     shouldShowNoResults,
-    shouldShowSearch,
-    toggleSearch,
   } = useSidebarChatsList(props);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (shouldShowSearch) searchInputRef.current?.focus();
-  }, [shouldShowSearch]);
+    if (!props.expanded || !shouldFocusSearch) return;
+
+    searchInputRef.current?.focus();
+    setShouldFocusSearch(false);
+  }, [props.expanded, shouldFocusSearch]);
+
+  function openSearch() {
+    setShouldFocusSearch(true);
+    props.onExpand();
+  }
 
   return (
     <div className="scrollbar-hidden min-h-0 flex-1 overflow-y-auto">
       <div className="mb-3">
         <SidebarChatControls
           expanded={props.expanded}
-          isSearchOpen={isSearchOpen}
           onNavigate={props.onNavigate}
           onSearchChange={setSearchQuery}
-          onSearchToggle={toggleSearch}
-          searchDisabled={!hasChats}
+          onSearchOpen={openSearch}
           searchInputRef={searchInputRef}
           searchQuery={searchQuery}
         />

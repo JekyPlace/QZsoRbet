@@ -1,79 +1,77 @@
 import { Link } from "@tanstack/react-router";
 import { Brain, Search } from "lucide-react";
 import type { RefObject } from "react";
+import SidebarNewChatButton from "./SidebarNewChatButton";
 
 type SidebarChatControlsProps = {
   expanded: boolean;
-  isSearchOpen: boolean;
   onNavigate: () => void;
   onSearchChange: (value: string) => void;
-  onSearchToggle: () => void;
-  searchDisabled: boolean;
+  onSearchOpen: () => void;
   searchInputRef: RefObject<HTMLInputElement | null>;
   searchQuery: string;
 };
 
 export default function SidebarChatControls({
   expanded,
-  isSearchOpen,
   onNavigate,
   onSearchChange,
-  onSearchToggle,
-  searchDisabled,
+  onSearchOpen,
   searchInputRef,
   searchQuery,
 }: SidebarChatControlsProps) {
   const circleClassName =
     "grid size-10 shrink-0 place-items-center rounded-full border border-black/15 bg-[#fff333] text-black transition hover:border-black/30 hover:bg-[#fff06a] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30";
-  const shouldShowSearchInput = expanded && isSearchOpen;
-
   return (
-    <div className="flex w-full items-center gap-2">
-      {shouldShowSearchInput ? (
-        <div className="flex min-h-10 min-w-0 flex-1 items-center rounded-full border border-black/20 bg-[#fff27a]/60 text-black transition focus-within:border-black focus-within:bg-[#fff27a]">
-          <button
-            type="button"
-            aria-label="Chiudi ricerca chat"
-            className="grid size-10 shrink-0 place-items-center rounded-full text-black/55 transition hover:text-black focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-black/30"
-            onClick={onSearchToggle}
-          >
+    <div className="flex w-full flex-col gap-2">
+      <div
+        className={`flex items-center gap-2 ${expanded ? "" : "flex-col"}`}
+      >
+        <SidebarNewChatButton expanded={expanded} onNavigate={onNavigate} />
+
+        <Link
+          to="/context"
+          title="Cervello"
+          aria-label="Cervello"
+          className={circleClassName}
+          onClick={onNavigate}
+          activeProps={{
+            "aria-current": "page",
+            className: "border-black shadow-[2px_2px_0_rgb(0_0_0/0.18)]",
+          }}
+        >
+          <Brain size={15} />
+        </Link>
+      </div>
+
+      {expanded && (
+        <div className="flex min-h-10 w-full items-center rounded-full border border-black/20 bg-[#fff27a]/60 text-black transition focus-within:border-black focus-within:bg-[#fff27a]">
+          <span className="grid size-10 shrink-0 place-items-center text-black/55">
             <Search size={15} />
-          </button>
+          </span>
           <input
             ref={searchInputRef}
             type="search"
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") onSearchToggle();
-            }}
             placeholder="Cerca chat"
+            aria-label="Cerca nelle chat"
             className="min-w-0 flex-1 border-0 bg-transparent py-1.5 pr-3 text-xs outline-none placeholder:text-black/40"
           />
         </div>
-      ) : (
+      )}
+
+      {!expanded && (
         <button
           type="button"
-          title="Ricerca"
+          title="Cerca nelle chat"
           aria-label="Cerca nelle chat"
-          aria-expanded={false}
-          className={`${circleClassName} disabled:cursor-not-allowed disabled:opacity-40`}
-          disabled={searchDisabled || !expanded}
-          onClick={onSearchToggle}
+          className={circleClassName}
+          onClick={onSearchOpen}
         >
           <Search size={15} />
         </button>
       )}
-
-      <Link
-        to="/context"
-        title="Cervello"
-        aria-label="Cervello"
-        className={circleClassName}
-        onClick={onNavigate}
-      >
-        <Brain size={15} />
-      </Link>
     </div>
   );
 }
