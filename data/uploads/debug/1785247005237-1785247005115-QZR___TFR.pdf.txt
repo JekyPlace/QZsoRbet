@@ -1,0 +1,147 @@
+[debug] PDF chunks before embedding: showing 5/2039
+
+--- chunk before embedding ---
+source: ../uploads/1785247005115-QZR___TFR.pdf
+page: 1
+chunkIndex: 0
+chars: 1257
+
+Documento PDF: ../uploads/1785247005115-QZR___TFR.pdf
+
+Pagina: 1
+
+
+
+QZR S.R.L.
+VIA TAGLIATE DI SAN MARCO 130
+55100 LUCCA LU
+Gentile
+GIANFALDONI JACOPO
+VIA GIOTTO 10
+51010 MASSA E COZZILE PT
+LUCCA 30/01/2026
+Trattamento integrativo spettante ai lavoratori dipendenti - L. n. 21 del 02/04/2020, di conversione
+del D.L. n. 3 del 05/02/2020
+Le disposizioni in oggetto prevedono, per l'anno 2026 , il trattamento integrativo in favore dei lavoratori che
+percepiscono redditi di lavoro dipendente ed alcuni redditi assimilati.
+Il trattamento integrativo annuo spetta come segue :
+- reddito complessivo fino a 15.000 euro: 1.200 euro
+- reddito complessivo oltre 15.000 e fino a 28.000 euro: il trattamento integrativo spetta solo in presenza
+di imposta lorda inferiore alla somma delle seguenti detrazioni d'imposta:
+a) detrazione per carichi di famiglia (art. 12 del TUIR);
+b) detrazione lavoro dipendente e assimilati (art. 13, c. 1 del TUIR);
+c) detrazioni su interessi passivi su prestiti o mutui agrari contratti fino al 31/12/2021 (art. 15, c. 1, lett. a) del TUIR)
+d) detrazioni su interessi passivi su mutui contratti fino al 31/12/2021 per l'acquisto o la costruzione dell'unità
+immobiliare da adibire a abitazione principale (art. 15, c. 1, lett. b) e c.
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785247005115-QZR___TFR.pdf
+page: 1
+chunkIndex: 1
+chars: 1268
+
+Documento PDF: ../uploads/1785247005115-QZR___TFR.pdf
+
+Pagina: 1
+
+
+
+l TUIR)
+d) detrazioni su interessi passivi su mutui contratti fino al 31/12/2021 per l'acquisto o la costruzione dell'unità
+immobiliare da adibire a abitazione principale (art. 15, c. 1, lett. b) e c. 1-ter del TUIR)
+e) detrazioni per spese sanitarie superiori a 15.493,71 euro sostenute fino al 31/12/2021 e rateizzate alla stessa data
+(art. 15, c. 1, lett. c) del TUIR)
+f) detrazioni per spese per interventi di recupero del patrimonio edilizio e di riqualificazione energetica degli edifici
+sostenute fino al 31/12/2021 e rateizzate alla stessa data (art. 16-bis del TUIR)
+g) tutte le detrazioni previste da altre disposizioni normative per spese sostenute fino al 31/12/2021 e rateizzate alla
+stessa data
+Le detrazioni di cui ai suddetti punti c), d), e), f), g) riguardano spese sostenute fino al 31/12/2021 (quindi anche in anni
+precedenti al 2021), ma la cui detrazione si protrae negli anni successivi per effetto della rateazione.
+Se l'imposta lorda è inferiore alle suddette detrazioni (imposta "incapiente"), il trattamento integrativo spetta per un importo
+pari alla differenza tra le detrazioni e l'imposta lorda, nel limite annuo di 1.200 euro.
+Il trattamento integrativo è esente da co
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785247005115-QZR___TFR.pdf
+page: 1
+chunkIndex: 2
+chars: 975
+
+Documento PDF: ../uploads/1785247005115-QZR___TFR.pdf
+
+Pagina: 1
+
+
+
+osta "incapiente"), il trattamento integrativo spetta per un importo
+pari alla differenza tra le detrazioni e l'imposta lorda, nel limite annuo di 1.200 euro.
+Il trattamento integrativo è esente da contributi e da imposte, non viene accantonato a TFR ma aumenta
+semplicemente il netto della busta paga.
+Le chiediamo, pertanto, di DICHIARARE che per l'anno 2026 , il suo reddito complessivo:
+non supererà il limite di € 15.000
+supererà € 15.000 ma non supererà il limite di € 28.000
+supererà il limite di € 28.000
+In caso di reddito superiore a € 15.000 e fino a € 28.000:
+dichiaro di non avere le detrazioni d'imposta di cui ai suddetti punti c), d), e), f), g)
+dichiaro di avere le detrazioni d'imposta di cui ai suddetti punti c) ,d), e), f), g): in tal caso determineremo
+la spettanza e l'importo del trattamento integrativo sulla base dei soli dati reddituali in nostro possesso e delle
+detrazioni note.
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785247005115-QZR___TFR.pdf
+page: 1
+chunkIndex: 3
+chars: 1251
+
+Documento PDF: ../uploads/1785247005115-QZR___TFR.pdf
+
+Pagina: 1
+
+
+
+cui ai suddetti punti c) ,d), e), f), g): in tal caso determineremo
+la spettanza e l'importo del trattamento integrativo sulla base dei soli dati reddituali in nostro possesso e delle
+detrazioni note. Per tale motivo, potrebbe essere necessario presentare la dichiarazione dei redditi per determinare
+l'esatto importo spettante, determinato considerando l'insieme dei redditi (non i soli redditi da lavoro dipendente e
+assimilati) e delle suddette detrazioni d'imposta.
+In caso di precedenti rapporti di lavoro nell'anno con altri datori, per il corretto calcolo del trattamento integrativo
+annuo, le richiediamo di consegnarci le CU dei precedenti rapporti di lavoro. In caso contrario, determineremo la
+spettanza e il relativo importo sulla base dei soli dati reddituali del presente rapporto di lavoro.
+Se, invece, intende rinunciare al trattamento integrativo perchè non sussistono i presupposti, le chiediamo
+di barrare la casella seguente (es.: rinuncia perchè presume di avere, per l'anno 2026 , l'imposta lorda
+pari o inferiore alla detrazione per lavoro dipendente):
+Dichiaro di voler rinunciare al trattamento integrativo L. n. 21 del 02/04/2020, di conversione del
+D.L. n.
+
+--- end chunk ---
+
+--- chunk before embedding ---
+source: ../uploads/1785247005115-QZR___TFR.pdf
+page: 1
+chunkIndex: 4
+chars: 683
+
+Documento PDF: ../uploads/1785247005115-QZR___TFR.pdf
+
+Pagina: 1
+
+
+
+, per l'anno 2026 , l'imposta lorda
+pari o inferiore alla detrazione per lavoro dipendente):
+Dichiaro di voler rinunciare al trattamento integrativo L. n. 21 del 02/04/2020, di conversione del
+D.L. n. 3 del 05/02/2020.
+In luogo dell'erogazione mensile, può richiedere l'applicazione del trattamento integrativo calcolato sul
+reddito annuo effettivo, solo nel cedolino di conguaglio fiscale, barrando la casella seguente:
+Dichiaro di voler l'applicazione del trattamento integrativo L. n. 21 del 02/04/2020, di conversione del D.L. n. 3 del
+05/02/2020, solo in sede di conguaglio fiscale.
+Distinti saluti.
+Data Firma
+
+--- end chunk ---

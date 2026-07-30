@@ -189,7 +189,8 @@ chatRouter.post("/message", async (request, response) => {
       signal: abortController.signal,
     });
     const retrievalQuery = rewrittenQuery.query;
-    const retrievedDocumentContext = await getRelevantCsvContext(retrievalQuery);
+    const retrievedDocumentContext =
+      await getRelevantCsvContext(retrievalQuery);
     const documentContext = selectRelevantDocumentContext(
       retrievedDocumentContext,
     );
