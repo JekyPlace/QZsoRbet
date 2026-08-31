@@ -13,6 +13,7 @@
     "db:migrate:dev": "prisma migrate dev",
     "index:csv": "tsx scripts/index-csv-to-qdrant.ts",
     "index:pdf": "tsx scripts/index-pdf-to-qdrant.ts",
+    "index:wordpress": "tsx scripts/index-wordpress-to-qdrant.ts",
     "index:all": "npm run index:csv && npm run index:pdf",
     "setup:docker": "npm run db:generate && npm run db:migrate && npm run index:all",
     "typecheck": "tsc --noEmit",

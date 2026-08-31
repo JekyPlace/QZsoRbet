@@ -8,5 +8,5 @@ export type DocumentContext = {
   score: number;
   source: string;
   text: string;
-  type?: "csv" | "pdf";
+  type?: "csv" | "pdf" | "wordpress";
 };

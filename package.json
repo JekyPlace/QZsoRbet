@@ -13,6 +13,7 @@
     "docker:index": "docker compose exec backend npm run index:all",
     "index:csv": "npm --prefix qzr-ai-be run index:csv",
     "index:pdf": "npm --prefix qzr-ai-be run index:pdf",
+    "index:wordpress": "npm --prefix qzr-ai-be run index:wordpress",
     "index:all": "npm --prefix qzr-ai-be run index:all",
     "docker:setup": "npm run setup:env && npm run docker:up && docker compose exec backend npm run setup:docker",
     "dev:frontend": "npm --prefix qzr-ai-tanstack run dev",

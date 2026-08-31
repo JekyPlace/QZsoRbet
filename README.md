@@ -245,6 +245,25 @@ I due indicizzatori sono separati:
 
 Nota: l'upload dall'app indicizza subito il singolo file caricato. I comandi `index:*` servono invece per indicizzare o reindicizzare documenti presenti nella cartella sorgente.
 
+## Contesto WordPress
+
+Il comando seguente legge oggetti, trasporti, percorsi e post dalle API
+WordPress, li converte in testo e li salva nella stessa collection Qdrant
+usata da CSV e PDF:
+
+```bash
+npm run index:wordpress
+```
+
+Configura l'indirizzo base nel file `.env` del backend:
+
+```env
+WORDPRESS_API_URL=http://localhost:8888/gestionaleQualityMade_REST_integration/wp-json
+```
+
+Lo script usa solo endpoint pubblici di lettura. Le richieste di trasporto e
+gli altri dati personali non vengono indicizzati.
+
 ## Primo Avvio Completo
 
 Dalla root del progetto:
@@ -373,6 +392,12 @@ Indicizza CSV e PDF in locale:
 
 ```bash
 npm run index:all
+```
+
+Indicizza il contesto WordPress in locale:
+
+```bash
+npm run index:wordpress
 ```
 
 Applica migration Prisma:

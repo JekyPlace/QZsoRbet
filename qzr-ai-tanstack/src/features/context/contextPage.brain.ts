@@ -8,6 +8,7 @@ import {
 import type { ContextFile, ContextUploadResponse } from "#/types/api.types";
 
 const ACCEPTED_EXTENSIONS = [".csv", ".pdf"] as const;
+const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
 
 type UploadProgress = {
   completed: number;
@@ -19,7 +20,11 @@ type UploadProgress = {
 function isAcceptedFile(file: File) {
   const fileName = file.name.toLowerCase();
 
-  return ACCEPTED_EXTENSIONS.some((extension) => fileName.endsWith(extension));
+  return (
+    ACCEPTED_EXTENSIONS.some((extension) => fileName.endsWith(extension)) &&
+    file.size > 0 &&
+    file.size <= MAX_FILE_SIZE_BYTES
+  );
 }
 
 export function useContextPage() {
@@ -82,11 +87,28 @@ export function useContextPage() {
     const files = Array.from(event.dataTransfer.files);
     if (files.length === 0) return;
 
-    const invalidFiles = files.filter((file) => !isAcceptedFile(file));
+    const hasInvalidExtension = files.some((file) => {
+      const fileName = file.name.toLowerCase();
+      return !ACCEPTED_EXTENSIONS.some((extension) => fileName.endsWith(extension));
+    });
+    const hasEmptyFile = files.some((file) => file.size === 0);
+    const hasOversizedFile = files.some(
+      (file) => file.size > MAX_FILE_SIZE_BYTES,
+    );
 
-    if (invalidFiles.length > 0) {
+    const hasInvalidFile = files.some((file) => !isAcceptedFile(file));
+
+    if (hasInvalidFile) {
       setUploadedFiles([]);
-      setError("Formato non supportato. Usa solo file CSV o PDF.");
+      setError(
+        hasOversizedFile
+          ? "Ogni file deve pesare al massimo 25 MB."
+          : hasEmptyFile
+            ? "Non puoi caricare file vuoti."
+            : hasInvalidExtension
+              ? "Formato non supportato. Usa solo file CSV o PDF."
+              : "File non valido.",
+      );
       return;
     }
 

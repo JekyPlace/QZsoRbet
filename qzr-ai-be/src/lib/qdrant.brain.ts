@@ -98,7 +98,9 @@ export async function searchRelevantCsvContext(
             : undefined,
         score: point.score,
         type:
-          point.payload?.type === "csv" || point.payload?.type === "pdf"
+          point.payload?.type === "csv" ||
+          point.payload?.type === "pdf" ||
+          point.payload?.type === "wordpress"
             ? point.payload.type
             : undefined,
       },

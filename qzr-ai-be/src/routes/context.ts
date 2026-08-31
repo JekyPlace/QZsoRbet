@@ -1,8 +1,9 @@
 import { mkdirSync } from "node:fs";
-import { readdir, stat, unlink } from "node:fs/promises";
+import { readFile, readdir, stat, unlink } from "node:fs/promises";
 import { extname, resolve, sep } from "node:path";
 import { Router } from "express";
 import multer from "multer";
+import Papa from "papaparse";
 import { indexCsvFile } from "../../scripts/index-csv-to-qdrant.js";
 import { indexPdfFile } from "../../scripts/index-pdf-to-qdrant.js";
 
@@ -12,6 +13,8 @@ const defaultUploadDir =
 const uploadDir = resolve(process.env.UPLOAD_SOURCE_DIR ?? defaultUploadDir);
 const qdrantUrl = process.env.QDRANT_URL ?? "http://localhost:6333";
 const qdrantCollection = process.env.QDRANT_COLLECTION ?? "csv_documents";
+const maxUploadFileSizeMb = Number(process.env.MAX_UPLOAD_FILE_SIZE_MB ?? 25);
+const maxUploadFileSizeBytes = maxUploadFileSizeMb * 1024 * 1024;
 
 mkdirSync(uploadDir, { recursive: true });
 
@@ -32,7 +35,45 @@ function getOriginalName(storedName: string) {
   return storedName.replace(/^\d+-/, "");
 }
 
+async function validateUploadedFile(filePath: string, fileType: "csv" | "pdf") {
+  const content = await readFile(filePath);
+
+  if (content.length === 0) {
+    throw new Error("Il file non può essere vuoto.");
+  }
+
+  if (fileType === "pdf") {
+    if (content.subarray(0, 5).toString("ascii") !== "%PDF-") {
+      throw new Error("Il contenuto del file non è un PDF valido.");
+    }
+
+    return;
+  }
+
+  let text: string;
+
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(content);
+  } catch {
+    throw new Error("Il CSV deve essere un file di testo UTF-8 valido.");
+  }
+
+  if (/\u0000/.test(text)) {
+    throw new Error("Il contenuto del file non è un CSV valido.");
+  }
+
+  const parsed = Papa.parse<string[]>(text, { skipEmptyLines: true });
+
+  if (parsed.errors.length > 0 || parsed.data.length === 0) {
+    throw new Error("Il contenuto del file non è un CSV valido.");
+  }
+}
+
 const upload = multer({
+  limits: {
+    fileSize: maxUploadFileSizeBytes,
+    files: 1,
+  },
   storage: multer.diskStorage({
     destination: (_request, _file, callback) => {
       callback(null, uploadDir);
@@ -154,7 +195,12 @@ contextRouter.post("/upload", (request, response) => {
   upload.single("file")(request, response, async (error) => {
     if (error) {
       response.status(400).json({
-        error: error instanceof Error ? error.message : "Upload non valido",
+        error:
+          error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE"
+            ? `Il file supera il limite di ${maxUploadFileSizeMb} MB.`
+            : error instanceof Error
+              ? error.message
+              : "Upload non valido",
       });
       return;
     }
@@ -176,6 +222,19 @@ contextRouter.post("/upload", (request, response) => {
     }
 
     try {
+      await validateUploadedFile(file.path, fileType);
+    } catch (validationError) {
+      await unlink(file.path).catch(() => undefined);
+      response.status(400).json({
+        error:
+          validationError instanceof Error
+            ? validationError.message
+            : "Il contenuto del file non è valido.",
+      });
+      return;
+    }
+
+    try {
       const indexing =
         fileType === "csv"
           ? await indexCsvFile(file.path)
@@ -191,6 +250,8 @@ contextRouter.post("/upload", (request, response) => {
         indexing,
       });
     } catch (indexingError) {
+      await unlink(file.path).catch(() => undefined);
+
       response.status(500).json({
         error:
           indexingError instanceof Error
